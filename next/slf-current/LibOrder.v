@@ -1167,4 +1167,4 @@ Lemma max_r : forall `{Le A} (n m:A),
   max n m = m.
 Proof using. introv T M. unfold max. case_if*. Qed.
 
-(* 2026-02-27 12:29 *)
+(* 2026-06-19 17:06 *)

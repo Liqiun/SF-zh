@@ -418,4 +418,4 @@ idtac "---------- not_exists_dist ---------".
 Print Assumptions not_exists_dist.
 Abort.
 
-(* 2026-02-27 12:25 *)
+(* 2026-06-19 17:02 *)

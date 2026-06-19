@@ -1007,4 +1007,4 @@ End ExamplePrograms2.
     (Isabelle/HOL, Coq/Rocq, PVS, HOL4, HOL). For a detailed list, see the last
     chapter of the companion notes, linked from the [Preface]. *)
 
-(* 2026-02-27 12:29 *)
+(* 2026-06-19 17:06 *)

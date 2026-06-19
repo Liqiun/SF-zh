@@ -437,4 +437,4 @@ Ltac var_neq :=
 #[global]
 Hint Extern 1 (?x <> ?y) => var_neq.
 
-(* 2026-02-27 12:29 *)
+(* 2026-06-19 17:06 *)

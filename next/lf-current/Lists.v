@@ -1,26 +1,24 @@
-(** * Lists: Working with Structured Data *)
+(** * Lists: 使用结构化的数据 *)
 
 From LF Require Export Induction.
 Module NatList.
 
 (* ################################################################# *)
-(** * Pairs of Numbers *)
+(** * 数值序对 *)
 
-(** In an [Inductive] type definition, each constructor can take
-    any number of arguments -- none (as with [true] and [O]), one (as
-    with [S]), or more than one (as with [nybble] and the following): *)
+(** 在 [Inductive] 类型定义中，每个【构造子|Constructor】可以有任意多个参数
+    ——可以没有（如 [true] 和 [O]），可以只有一个（如 [S]），也可以超过一个
+    （如 [nybble]，以及下文所示）： *)
 
 Inductive natprod : Type :=
   | pair (n1 n2 : nat).
 
-(** This declaration can be read: "The one and only way to
-    construct a pair of numbers is by applying the constructor [pair]
-    to two arguments of type [nat]." *)
+(** 此声明可以读作：「构造数值序对的唯一一种方法，就是将构造子 [pair]
+    应用到两个 [nat] 类型的参数上。」 *)
 
 Check (pair 3 5) : natprod.
 
-(** Functions for extracting the first and second components of a pair
-    can then be defined by pattern matching. *)
+(** 以下函数可提取序对中第一个和第二个分量，通过模式匹配来定义。 *)
 
 Definition fst (p : natprod) : nat :=
   match p with
@@ -35,15 +33,12 @@ Definition snd (p : natprod) : nat :=
 Compute (fst (pair 3 5)).
 (* ===> 3 *)
 
-(** Since pairs will be used heavily in what follows, it will be
-    convenient to write them with the standard mathematical notation
-    [(x,y)] instead of [pair x y].  We can tell Rocq to allow this with
-    a [Notation] declaration. *)
+(** 由于序对十分常用，不妨以标准的数学记法 [(x,y)] 取代 [pair x y]。
+    通过 [Notation] 向 Coq 声明该记法： *)
 
 Notation "( x , y )" := (pair x y).
 
-(** The new notation can be used both in expressions and in pattern
-    matches. *)
+(** 新的记法在表达式和模式匹配中都可以使用。 *)
 
 Compute (fst (3,5)).
 
@@ -1204,4 +1199,4 @@ Proof.
 (** [] *)
 End PartialMap.
 
-(* 2026-06-19 17:45 *)
+(* 2026-06-19 18:13 *)

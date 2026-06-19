@@ -4,11 +4,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="common/css/sf.css" rel="stylesheet" type="text/css" />
-<title>Induction: Proof by Induction</title>
+<title>Induction: 归纳证明</title>
 <link href="common/jquery-ui/jquery-ui.css" rel="stylesheet">
 <script src="common/jquery-ui/external/jquery/jquery.js"></script>
 <script src="common/jquery-ui/jquery-ui.js"></script>
 <script src="common/toggleproofs.js"></script>
+<script src="common/term.js" defer></script>
+<link href="common/css/term.css" rel="stylesheet" type="text/css"/>
 <link href="common/css/lf.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -19,27 +21,26 @@
 <div id="header">
 <div id='logoinheader'><a href='https://softwarefoundations.cis.upenn.edu'>
 <img src='common/media/image/sf_logo_sm.png' alt='Software Foundations Logo'></a></div>
-<div class='booktitleinheader'><a href='index.html'>Volume 1: Logical Foundations</a></div>
+<div class='booktitleinheader'><a href='index.html'>Volume 1: 逻辑基础</a></div>
 <ul id='menu'>
-   <li class='section_name'><a href='toc.html'>Table of Contents</a></li>
-   <li class='section_name'><a href='coqindex.html'>Index</a></li>
-   <li class='section_name'><a href='deps.html'>Roadmap</a></li>
+   <li class='section_name'><a href='toc.html'>目录</a></li>
+   <li class='section_name'><a href='coqindex.html'>索引</a></li>
+   <li class='section_name'><a href='deps.html'>路线</a></li>
 </ul>
 </div>
 
 <div id="main">
 
-<h1 class="libtitle">Induction<span class="subtitle">Proof by Induction</span></h1>
+<h1 class="libtitle">Induction<span class="subtitle">归纳证明</span></h1>
 
 
 
 <div class="doc">
-<a id="lab63"></a><h1 class="section">Separate Compilation</h1>
+<a id="lab63"></a><h1 class="section">单独编译</h1>
 
 <div class="paragraph"> </div>
 
- Before getting started on this chapter, we need to import
-    all of our definitions from the previous chapter: 
+ 在开始本章之前，我们需要把上一章中所有的定义都导入进来： 
 </div>
 <div class="code">
 
@@ -47,95 +48,86 @@
 </div>
 
 <div class="doc">
-For this <span class="inlinecode"><span class="id" title="keyword">Require</span></span> command to work, Rocq needs to be able to
-    find a compiled version of the previous chapter (<span class="inlinecode"><span class="id" title="var">Basics.v</span></span>).
-    This compiled version, called <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span>, is analogous to the
-    <span class="inlinecode">.<span class="id" title="var">class</span></span> files compiled from <span class="inlinecode">.<span class="id" title="var">java</span></span> source files and the <span class="inlinecode">.<span class="id" title="var">o</span></span>
-    files compiled from <span class="inlinecode">.<span class="id" title="var">c</span></span> files.
+为了让这个 <span class="inlinecode"><span class="id" title="keyword">Require</span></span> 命令正常工作，Rocq 需要找到上一章
+    （<span class="inlinecode"><span class="id" title="var">Basics.v</span></span>）编译后的版本。这个编译后的版本被称为 <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span>，
+    类似于从 <span class="inlinecode">.<span class="id" title="var">java</span></span> 源文件编译出来的 <span class="inlinecode">.<span class="id" title="var">class</span></span> 文件，
+    以及从 <span class="inlinecode">.<span class="id" title="var">c</span></span> 文件编译出来的 <span class="inlinecode">.<span class="id" title="var">o</span></span> 文件。
 
 <div class="paragraph"> </div>
 
-    To compile <span class="inlinecode"><span class="id" title="var">Basics.v</span></span> and obtain <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span>, first make sure that
-    the files <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>, <span class="inlinecode"><span class="id" title="var">Induction.v</span></span>, and <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span> are in
-    the current directory.
+    为了编译 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span> 并获得 <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span>，请首先确保文件 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>、
+    <span class="inlinecode"><span class="id" title="var">Induction.v</span></span> 和 <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span> 都在当前目录下。
 
 <div class="paragraph"> </div>
 
-    The <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span> file should contain just the following line:
+    <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span> 文件应当只包含以下这行内容：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<span class="id" title="var">Q</span> . <span class="id" title="var">LF</span>
-</span>    This maps the current directory ("<span class="inlinecode">.</span>", which contains <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>,
-    <span class="inlinecode"><span class="id" title="var">Induction.v</span></span>, etc.) to the prefix (or "logical directory")
-    "<span class="inlinecode"><span class="id" title="var">LF</span></span>". Proof General, CoqIDE, and VSCoq read <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span>
-    automatically, to find out to where to look for the file
-    <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span> corresponding to the library <span class="inlinecode"><span class="id" title="var">LF.Basics</span></span>.
+</span>    这会将当前目录（即包含 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>、<span class="inlinecode"><span class="id" title="var">Induction.v</span></span> 等文件的「.」目录）
+    映射到前缀（或「【逻辑目录|Logical Directory】」）「LF」。
+    Proof General、CoqIDE 和 VSRocq 会自动读取 <span class="inlinecode"><span class="id" title="var">_CoqProject</span></span>，
+    从而得知在何处寻找库 <span class="inlinecode"><span class="id" title="var">LF.Basics</span></span> 对应的 <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span> 文件。
 
 <div class="paragraph"> </div>
 
-    Once the files are in place, there are various ways to build
-    <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span> from an IDE, or you can build it from the command
-    line.  From an IDE...
+    一旦文件准备就绪，有多种方式可以从 IDE 中构建 <span class="inlinecode"><span class="id" title="var">Basics.vo</span></span>，
+    或者你也可以通过命令行来构建它。在 IDE 中……
 
 <div class="paragraph"> </div>
 
 <ul class="doclist">
-<li> In Proof General: The compilation can be made to happen
-       automatically when you submit the <span class="inlinecode"><span class="id" title="keyword">Require</span></span> line above to PG, by
-       setting the emacs variable <span class="inlinecode"><span class="id" title="var">coq</span>-<span class="id" title="var">compile</span>-<span class="id" title="keyword">before</span>-<span class="id" title="var">require</span></span> to <span class="inlinecode"><span class="id" title="var">t</span></span>.
-       This can also be found in the menu: "Coq" &gt; "Auto Compilation" &gt;
-       "Compile Before Require".
+<li> 在 Proof General 中：通过将 Emacs 变量 <span class="inlinecode"><span class="id" title="var">coq</span>-<span class="id" title="var">compile</span>-<span class="id" title="keyword">before</span>-<span class="id" title="var">require</span></span>
+       设置为 <span class="inlinecode"><span class="id" title="var">t</span></span>，可以在向 PG 提交上面的 <span class="inlinecode"><span class="id" title="keyword">Require</span></span> 行时自动进行编译。
+       这也可以在菜单中找到：
+       「Coq」 &gt; 「Auto Compilation」 &gt; 「Compile Before Require」。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> In CoqIDE: One thing you can do on all platforms is open
-       <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>; then, in the "Compile" menu, click on "Compile Buffer".
+<li> 在 CoqIDE 中：在所有平台上，你都可以打开 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>；
+       然后在「Compile」菜单中点击「Compile Buffer」。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> For VSCode users, open the terminal pane at the bottom and then
-       follow the command line instructions below.  (If you downloaded
-       the project setup .tgz file, just doing `make` should build all
-       the code.)
+<li> 对于 VSCode 用户，打开底部的终端面板，
+       然后按照下面的命令行指令操作。（如果你下载了项目设置的 .tgz 文件，
+       只需运行 `make` 就可以构建所有代码。）
 
 </li>
 </ul>
 
 <div class="paragraph"> </div>
 
-    To compile <span class="inlinecode"><span class="id" title="var">Basics.v</span></span> from the command line...
+    要在命令行中编译 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>……
 
 <div class="paragraph"> </div>
 
 <ul class="doclist">
-<li> First, generate a <span class="inlinecode"><span class="id" title="var">Makefile</span></span> using the <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">makefile</span></span> utility,
-       which comes installed with Rocq. (If you obtained the whole volume as
-       a single archive, a <span class="inlinecode"><span class="id" title="var">Makefile</span></span> should already exist and you can
-       skip this step.)
+<li> 首先，使用 Rocq 自带的 <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">makefile</span></span> 工具生成 <span class="inlinecode"><span class="id" title="var">Makefile</span></span>。
+       （如果你是将整个卷作为一个归档文件获取的，<span class="inlinecode"><span class="id" title="var">Makefile</span></span> 应该已经存在，
+       你可以跳过这一步。）
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rocq</span> <span class="id" title="var">makefile</span> -<span class="id" title="var">f</span> <span class="id" title="var">_CoqProject</span> *.<span class="id" title="var">v</span> -<span class="id" title="var">o</span> <span class="id" title="var">Makefile</span>
-</span>       You should rerun that command whenever you add or remove
-       Rocq files in this directory.
+</span>       每当你在该目录下添加或删除 Rocq 文件时，都应当重新运行该命令。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> Now you can compile <span class="inlinecode"><span class="id" title="var">Basics.v</span></span> by running <span class="inlinecode"><span class="id" title="var">make</span></span> with the
-       corresponding <span class="inlinecode">.<span class="id" title="var">vo</span></span> file as a target:
+<li> 现在，你可以通过运行 <span class="inlinecode"><span class="id" title="var">make</span></span> 并指定对应的 <span class="inlinecode">.<span class="id" title="var">vo</span></span> 文件作为目标，
+       来编译 <span class="inlinecode"><span class="id" title="var">Basics.v</span></span>：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make</span> <span class="id" title="var">Basics.vo</span>
-</span>       All files in the directory can be compiled by giving no
-       arguments:
+</span>       如果不带任何参数，则可以编译目录下的所有文件：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make</span>
 </span>
 </li>
-<li> Under the hood, <span class="inlinecode"><span class="id" title="var">make</span></span> uses the Rocq compiler, <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>.  You can
-       also run <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span> directly:
+<li> 在幕后，<span class="inlinecode"><span class="id" title="var">make</span></span> 使用的是 Rocq 编译器 <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>。
+       你也可以直接运行 <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rocq</span> <span class="id" title="var">compile</span> -<span class="id" title="var">Q</span> . <span class="id" title="var">LF</span> <span class="id" title="var">Basics.v</span>
 </span>
@@ -143,103 +135,87 @@ For this <span class="inlinecode"><span class="id" title="keyword">Require</span
 
 
 </li>
-<li> Since <span class="inlinecode"><span class="id" title="var">make</span></span> also calculates dependencies between source files
-       to compile them in the right order, <span class="inlinecode"><span class="id" title="var">make</span></span> should generally be
-       preferred over running <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span> explicitly.  But as a last (but
-       not terrible) resort, you can simply compile each file manually
-       as you go.  For example, before starting work on the present
-       chapter, you would need to run the following command:
+<li> 由于 <span class="inlinecode"><span class="id" title="var">make</span></span> 还会计算源文件之间的依赖关系，以便按正确的顺序编译它们，
+       因此通常应优先选择 <span class="inlinecode"><span class="id" title="var">make</span></span>，而不是显式运行 <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>。
+       但作为最后的手段（但也并不算糟），你可以随着进度手动编译每个文件。
+       例如，在开始本章的工作之前，你需要运行以下命令：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rocq</span> <span class="id" title="var">compile</span> -<span class="id" title="var">Q</span> . <span class="id" title="var">LF</span> <span class="id" title="var">Basics.v</span>
-</span>       Then, once you've finished this chapter, you'd do
+</span>       然后，一旦你完成了本章，可以运行：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rocq</span> <span class="id" title="var">compile</span> -<span class="id" title="var">Q</span> . <span class="id" title="var">LF</span> <span class="id" title="var">Induction.v</span>
-</span>       to get ready to work on the next one.  If you ever remove the
-       .vo files, you'd need to give both commands again (in that
-       order).
+</span>       来为下一章的工作做好准备。如果你删除了 .vo 文件，
+       则需要再次按该顺序运行这两个命令。
 
 </li>
 </ul>
 
 <div class="paragraph"> </div>
 
-    Troubleshooting:
+    故障排除：
 
 <div class="paragraph"> </div>
 
 <ul class="doclist">
-<li> For many of the alternatives above you need to make sure that
-       the <span class="inlinecode"><span class="id" title="var">rocq</span></span> executable is in your <span class="inlinecode"><span class="id" title="var">PATH</span></span>.
+<li> 对于上述许多方法，你需要确保 <span class="inlinecode"><span class="id" title="var">rocq</span></span> 可执行文件在你的环境变量 <span class="inlinecode"><span class="id" title="var">PATH</span></span> 中。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> If you get complaints about missing identifiers, it may be
-       because the "load path" for Rocq is not set up correctly.  The
-       <span class="inlinecode"><span class="id" title="keyword">Print</span></span> <span class="inlinecode"><span class="id" title="var">LoadPath</span>.</span> command may be helpful in sorting out such
-       issues.
+<li> 如果你遇到有关缺失标识符的抱怨，可能是因为没有正确设置 Rocq 的
+       「【加载路径|Load Path】」。命令 <span class="inlinecode"><span class="id" title="keyword">Print</span></span> <span class="inlinecode"><span class="id" title="var">LoadPath</span>.</span> 可能有助于排查此类问题。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> When trying to compile a later chapter, if you see a message like
+<li> 当尝试编译后面的章节时，如果你看到类似以下的信息：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Compiled</span> <span class="id" title="var">library</span> <span class="id" title="keyword">Induction</span> <span class="id" title="var">makes</span> <span class="id" title="var">inconsistent</span> <span class="id" title="var">assumptions</span> <span class="id" title="var">over</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">library</span> <span class="id" title="var">Basics</span>
-</span>       a common reason is that the library <span class="inlinecode"><span class="id" title="var">Basics</span></span> was modified and
-       recompiled without also recompiling <span class="inlinecode"><span class="id" title="keyword">Induction</span></span> which depends
-       on it.  Recompile <span class="inlinecode"><span class="id" title="keyword">Induction</span></span>, or everything if too many files
-       are affected (for instance by running <span class="inlinecode"><span class="id" title="var">make</span></span> and if even this
-       doesn't work then <span class="inlinecode"><span class="id" title="var">make</span></span> <span class="inlinecode"><span class="id" title="var">clean</span>;</span> <span class="inlinecode"><span class="id" title="var">make</span></span>).
+</span>       常见的原因是库 <span class="inlinecode"><span class="id" title="var">Basics</span></span> 被修改并重新编译了，但没有重新编译依赖它的 <span class="inlinecode"><span class="id" title="keyword">Induction</span></span>。
+       请重新编译 <span class="inlinecode"><span class="id" title="keyword">Induction</span></span>；或者在受影响文件过多时重新编译所有内容
+       （例如运行 <span class="inlinecode"><span class="id" title="var">make</span></span>，如果这也不起作用，就运行 <span class="inlinecode"><span class="id" title="var">make</span></span> <span class="inlinecode"><span class="id" title="var">clean</span>;</span> <span class="inlinecode"><span class="id" title="var">make</span></span>）。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> If you get complaints about missing identifiers later in this
-       file it may be because the "load path" for Rocq is not set up
-       correctly.  The <span class="inlinecode"><span class="id" title="keyword">Print</span></span> <span class="inlinecode"><span class="id" title="var">LoadPath</span>.</span> command may be helpful in
-       sorting out such issues.
+<li> 如果你在本书后面的内容中遇到了缺失标识符的抱怨，可能也是因为没有正确设置
+       Rocq 的「加载路径」。命令 <span class="inlinecode"><span class="id" title="keyword">Print</span></span> <span class="inlinecode"><span class="id" title="var">LoadPath</span>.</span> 对解决此类问题可能会有所帮助。
 
 <div class="paragraph"> </div>
 
-       In particular, if you see a message like
+       特别是，如果你看到类似以下的信息：
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Compiled</span> <span class="id" title="var">library</span> <span class="id" title="var">Foo</span> <span class="id" title="var">makes</span> <span class="id" title="var">inconsistent</span> <span class="id" title="var">assumptions</span> <span class="id" title="var">over</span><br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">library</span> <span class="id" title="var">Bar</span>
-</span>       check whether you have multiple installations of Rocq on your
-       machine.  It may be that commands (like <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>) that you execute
-       in a terminal window are getting a different version of Rocq than
-       commands executed by Proof General or CoqIDE.
+</span>       请检查你的机器上是否安装了多个 Rocq。这可能是因为你在终端窗口中执行的命令
+       （如 <span class="inlinecode"><span class="id" title="var">rocq</span></span> <span class="inlinecode"><span class="id" title="var">compile</span></span>）获取的是与 Proof General 或 CoqIDE 中执行时不同的 Rocq 版本。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> One more tip for CoqIDE users: If you see messages like <span class="inlinecode"><span class="id" title="var">Error</span>:</span>
-       <span class="inlinecode"><span class="id" title="var">Unable</span></span> <span class="inlinecode"><span class="id" title="var">to</span></span> <span class="inlinecode"><span class="id" title="var">locate</span></span> <span class="inlinecode"><span class="id" title="var">library</span></span> <span class="inlinecode"><span class="id" title="var">Basics</span></span>, a likely reason is
-       inconsistencies between compiling things <i>within CoqIDE</i> vs <i>using
-       <span class="inlinecode"><span class="id" title="var">rocq</span></span> from the command line</i>.  This typically happens when there
-       are two incompatible versions of Rocq installed on your
-       system (one associated with CoqIDE, and one associated with <span class="inlinecode"><span class="id" title="var">rocq</span></span>
-       from the terminal).  The workaround for this situation is
-       compiling using CoqIDE only (i.e. choosing "make" from the menu),
-       and avoiding using <span class="inlinecode"><span class="id" title="var">rocq</span></span> directly at all. 
+<li> 再给 CoqIDE 用户提一个建议：如果你看到类似 <span class="inlinecode"><span class="id" title="var">Error</span>:</span> <span class="inlinecode"><span class="id" title="var">Unable</span></span> <span class="inlinecode"><span class="id" title="var">to</span></span> <span class="inlinecode"><span class="id" title="var">locate</span></span>
+       <span class="inlinecode"><span class="id" title="var">library</span></span> <span class="inlinecode"><span class="id" title="var">Basics</span></span> 的信息，可能的原因是在「CoqIDE 内部」编译与在「命令行使用 <span class="inlinecode"><span class="id" title="var">rocq</span></span>」
+       编译之间存在不一致。这通常发生于系统上安装了两个不兼容的 Rocq 版本时
+       （一个与 CoqIDE 关联，另一个与终端的 <span class="inlinecode"><span class="id" title="var">rocq</span></span> 关联）。
+       此情况的解决方法是仅使用 CoqIDE进行编译（即在菜单中选择「make」），
+       并完全避免直接使用 <span class="inlinecode"><span class="id" title="var">rocq</span></span>。 
 
 </li>
 </ul>
 </div>
 
 <div class="doc">
-<a id="lab64"></a><h1 class="section">Proof by Induction</h1>
+<a id="lab64"></a><h1 class="section">归纳证明</h1>
 
 <div class="paragraph"> </div>
 
- We can prove that <span class="inlinecode">0</span> is a neutral element for <span class="inlinecode">+</span> on the <i>left</i>
-    using just <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>.  But the proof that it is also a neutral
-    element on the <i>right</i> ... 
+ 我们只用 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span> 就证明了 <span class="inlinecode">0</span> 是 <span class="inlinecode">+</span> 的左幺元。
+    不过我们也注意到要证明它也是【右】幺元的话... 
 </div>
 <div class="code">
 
@@ -248,10 +224,8 @@ For this <span class="inlinecode"><span class="id" title="keyword">Require</span
 </div>
 
 <div class="doc">
-... can't be done in the same simple way.  Just applying
-  <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span> doesn't work, since the <span class="inlinecode"><span class="id" title="var">n</span></span> in <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> is an arbitrary
-  unknown number, so the <span class="inlinecode"><span class="id" title="keyword">match</span></span> in the definition of <span class="inlinecode">+</span> can't be
-  simplified.  
+...事情就没这么简单了。只应用 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span> 的话不起作用，因为 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span>
+    中的 <span class="inlinecode"><span class="id" title="var">n</span></span> 是任意未知数，所以在 <span class="inlinecode">+</span> 的定义中 <span class="inlinecode"><span class="id" title="keyword">match</span></span> 匹配无法被化简。  
 </div>
 <div class="code">
 
@@ -262,10 +236,8 @@ For this <span class="inlinecode"><span class="id" title="keyword">Require</span
 </div>
 
 <div class="doc">
-And reasoning by cases using <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> doesn't get us much
-    further: the branch of the case analysis where we assume <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>
-    goes through just fine, but in the branch where <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> for
-    some <span class="inlinecode"><span class="id" title="var">n'</span></span> we get stuck in exactly the same way. 
+即便用 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> 分类讨论也不会有所改善：诚然，我们能够轻易地证明 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>
+    时的情况；但在证明对于某些 <span class="inlinecode"><span class="id" title="var">n'</span></span> 而言 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 时，我们又会遇到和此前相同的问题。 
 </div>
 <div class="code">
 
@@ -274,49 +246,44 @@ And reasoning by cases using <span class="inlinecode"><span class="id" title="ta
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">n</span> <span class="id" title="keyword">as</span> [| <span class="id" title="var">n'</span>] <span class="id" title="var">eqn</span>:<span class="id" title="var">E</span>.<br/>
 &nbsp;&nbsp;- <span class="comment">(*&nbsp;n&nbsp;=&nbsp;0&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. <span class="comment">(*&nbsp;so&nbsp;far&nbsp;so&nbsp;good...&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>. <span class="comment">(*&nbsp;虽然目前还没啥问题...&nbsp;*)</span><br/>
 &nbsp;&nbsp;- <span class="comment">(*&nbsp;n&nbsp;=&nbsp;S&nbsp;n'&nbsp;*)</span><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="comment">(*&nbsp;...but&nbsp;here&nbsp;we&nbsp;are&nbsp;stuck&nbsp;again&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="comment">(*&nbsp;...不过我们又卡在这儿了&nbsp;*)</span><br/>
 <span class="id" title="keyword">Abort</span>.<br/>
 </div>
 
 <div class="doc">
-We could use <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> to get a bit further, but,
-    since <span class="inlinecode"><span class="id" title="var">n</span></span> can be arbitrarily large, we'll never get all the way
-    there if we just go on like this. 
+虽然还可以用 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 再推进一步，但由于 <span class="inlinecode"><span class="id" title="var">n</span></span> 可以任意大，
+    如果照这个思路继续证明的话，我们永远也证不完。 
 <div class="paragraph"> </div>
 
- To prove interesting facts about numbers, lists, and other
-    inductively defined sets, we often need a more powerful reasoning
-    principle: <i>induction</i>.
+ 为了证明这种关于数字、列表等归纳定义的集合的有趣事实，
+    我们通常需要一个更强大的推理原理：【归纳】。
 
 <div class="paragraph"> </div>
 
-    Recall (from a discrete math course, probably) the <i>principle of
-    induction over natural numbers</i>: If <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> is some proposition
-    involving a natural number <span class="inlinecode"><span class="id" title="var">n</span></span> and we want to show that <span class="inlinecode"><span class="id" title="var">P</span></span> holds for
-    all numbers <span class="inlinecode"><span class="id" title="var">n</span></span>, we can reason like this:
+    回想一下 【自然数的归纳法则】，你也许曾在高中的数学课上，在某门离散数学课上或
+    在其它类似的课上学到过它：若 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> 为关于自然数的命题，而当我们想要证明 <span class="inlinecode"><span class="id" title="var">P</span></span>
+    对于所有自然数 <span class="inlinecode"><span class="id" title="var">n</span></span> 都成立时，可以这样推理：
 <ul class="doclist">
-<li> show that <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">O</span>)</span> holds;
+<li> 证明 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">O</span>)</span> 成立；
 
 </li>
-<li> show that, for any <span class="inlinecode"><span class="id" title="var">n'</span></span>, if <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n'</span>)</span> holds, then so does
-           <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span>;
+<li> 证明对于任何 <span class="inlinecode"><span class="id" title="var">n'</span></span>，若 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n'</span>)</span> 成立，那么 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span> 也成立。
 
 </li>
-<li> conclude that <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> holds for all <span class="inlinecode"><span class="id" title="var">n</span></span>.
+<li> 最后得出 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> 对于所有 <span class="inlinecode"><span class="id" title="var">n</span></span> 都成立的结论。
 
 </li>
 </ul>
 
 <div class="paragraph"> </div>
 
-    In Rocq, the steps are the same, except we typically encounter them
-    in reverse order: we begin with the goal of proving <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> for all
-    <span class="inlinecode"><span class="id" title="var">n</span></span> and apply the <span class="inlinecode"><span class="id" title="tactic">induction</span></span> tactic to break it down into two
-    separate subgoals: one where we must show <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">O</span>)</span> and another where
-    we must show <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n'</span>)</span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span>.  Here's how this works for the
-    theorem at hand... 
+    在 Rocq 中的步骤也一样，但我们通常会以相反的顺序遇到它们：
+    我们以证明 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n</span>)</span> 对于所有 <span class="inlinecode"><span class="id" title="var">n</span></span> 都成立的目标开始，
+    然后通过应用 <span class="inlinecode"><span class="id" title="tactic">induction</span></span> 策略把它分为两个子目标：一个是我们必须证明
+    <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">O</span>)</span> 成立，另一个是我们必须证明 <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">n'</span>)</span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">P</span>(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span>。
+    下面就是对该定理的用法：... 
 </div>
 <div class="code">
 
@@ -328,28 +295,23 @@ We could use <span class="inlinecode"><span class="id" title="tactic">destruct</
 </div>
 
 <div class="doc">
-Like <span class="inlinecode"><span class="id" title="tactic">destruct</span></span>, the <span class="inlinecode"><span class="id" title="tactic">induction</span></span> tactic takes an <span class="inlinecode"><span class="id" title="keyword">as</span>...</span>
-    clause that specifies the names of the variables to be introduced
-    in the subgoals.  Since there are two subgoals, the <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> clause
-    has two parts, separated by a vertical bar, <span class="inlinecode">|</span>.  (Strictly
-    speaking, we can omit the <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> clause and Rocq will choose names
-    for us.  In practice, this is a bad practice, as Rocq's automatic
-    choices tend to be confusing.)
+和 <span class="inlinecode"><span class="id" title="tactic">destruct</span></span> 一样，<span class="inlinecode"><span class="id" title="tactic">induction</span></span> 策略也能通过 <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> 子句为引入到
+    子目标中的变量指定名字。由于这次有两个子目标，因此 <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> 有两部分，用 <span class="inlinecode">|</span>
+    隔开。（严格来说，我们可以忽略 <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> 子句，Rocq 会为它们选择名字。
+    然而在实践中这样不好，因为让 Rocq 自行选择名字的话更容易导致理解上的困难。）
 
 <div class="paragraph"> </div>
 
-    In the first subgoal, <span class="inlinecode"><span class="id" title="var">n</span></span> is replaced by <span class="inlinecode">0</span>.  No new variables
-    are introduced (so the first part of the <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> is empty), and
-    the goal becomes <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode">0</span>, which follows easily by simplification.
+    在第一个子目标中 <span class="inlinecode"><span class="id" title="var">n</span></span> 被 <span class="inlinecode">0</span> 所取代。由于没有新的变量会被引入，因此 <span class="inlinecode"><span class="id" title="keyword">as</span></span> <span class="inlinecode">...</span>
+    字句的第一部分为空；而当前的目标会变成 <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>：使用化简就能得到此结论。
 
 <div class="paragraph"> </div>
 
-    In the second subgoal, <span class="inlinecode"><span class="id" title="var">n</span></span> is replaced by <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span>, and the
-    assumption <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">n'</span></span> is added to the context with the name
-    <span class="inlinecode"><span class="id" title="var">IHn'</span></span> (i.e., the Induction Hypothesis for <span class="inlinecode"><span class="id" title="var">n'</span></span>).  These two names
-    are specified in the second part of the <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> clause.  The goal
-    in this case becomes <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode">0</span>, which simplifies to
-    <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0)</span>, which in turn follows from <span class="inlinecode"><span class="id" title="var">IHn'</span></span>. 
+    在第二个子目标中，<span class="inlinecode"><span class="id" title="var">n</span></span> 被 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 所取代，而对 <span class="inlinecode"><span class="id" title="var">n'</span></span> 的归纳假设（Inductive
+    Hypothesis），即 <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">n'</span></span> 则以 <span class="inlinecode"><span class="id" title="var">IHn'</span></span> 为名被添加到了语境中。
+    这两个名字在 <span class="inlinecode"><span class="id" title="keyword">as</span>...</span> 子句的第二部分中指定。在此语境中，待证目标变成了
+    <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode">0</span>，它可被化简为 <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode">(<span class="id" title="var">n'</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0)</span>，而此结论可通过
+    <span class="inlinecode"><span class="id" title="var">IHn'</span></span> 得出。 
 </div>
 <div class="code">
 
@@ -365,15 +327,12 @@ Like <span class="inlinecode"><span class="id" title="tactic">destruct</span></s
 </div>
 
 <div class="doc">
-(The use of the <span class="inlinecode"><span class="id" title="tactic">intros</span></span> tactic in these proofs is actually
-    redundant.  When applied to a goal that contains quantified
-    variables, the <span class="inlinecode"><span class="id" title="tactic">induction</span></span> tactic will automatically move them
-    into the context as needed.) 
+（其实在这些证明中我们并不需要 <span class="inlinecode"><span class="id" title="tactic">intros</span></span>：当 <span class="inlinecode"><span class="id" title="tactic">induction</span></span>
+    策略被应用到包含量化变量的目标中时，它会自动将需要的变量移到语境中。） 
 <div class="paragraph"> </div>
 
 <a id="lab65"></a><h4 class="section">Exercise: 2 stars, standard, especially useful (basic_induction)</h4>
- Prove the following using induction. You might need previously
-    proven results. 
+ 用归纳法证明以下命题。你可能需要之前的证明结果。 
 </div>
 <div class="code">
 
@@ -400,7 +359,7 @@ Like <span class="inlinecode"><span class="id" title="tactic">destruct</span></s
 <div class="paragraph"> </div>
 
 <a id="lab66"></a><h4 class="section">Exercise: 2 stars, standard (double_plus)</h4>
- Consider the following function, which doubles its argument: 
+ 考虑以下函数，它将参数乘以二： 
 </div>
 <div class="code">
 
@@ -412,7 +371,7 @@ Like <span class="inlinecode"><span class="id" title="tactic">destruct</span></s
 </div>
 
 <div class="doc">
-Use induction to prove this simple fact about <span class="inlinecode"><span class="id" title="var">double</span></span>: 
+用归纳法证明以下关于 <span class="inlinecode"><span class="id" title="var">double</span></span> 的简单事实： 
 </div>
 <div class="code">
 
@@ -426,8 +385,8 @@ Use induction to prove this simple fact about <span class="inlinecode"><span cla
 <div class="paragraph"> </div>
 
 <a id="lab67"></a><h4 class="section">Exercise: 2 stars, standard (eqb_refl)</h4>
- The following theorem relates the computational equality <span class="inlinecode">=?</span> on
-    <span class="inlinecode"><span class="id" title="var">nat</span></span> with the definitional equality <span class="inlinecode">=</span> on <span class="inlinecode"><span class="id" title="var">bool</span></span>. 
+ 以下定理将 <span class="inlinecode"><span class="id" title="var">nat</span></span> 上的「【计算等价|Computational Equality】」<span class="inlinecode">=?</span>
+    与 <span class="inlinecode"><span class="id" title="var">bool</span></span> 上的「【定义等价|Definitional Equality】」<span class="inlinecode">=</span> 联系起来。 
 </div>
 <div class="code">
 
@@ -442,12 +401,10 @@ Use induction to prove this simple fact about <span class="inlinecode"><span cla
 <div class="paragraph"> </div>
 
 <a id="lab68"></a><h4 class="section">Exercise: 2 stars, standard, optional (even_S)</h4>
- One inconvenient aspect of our definition of <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> is the
-    recursive call on <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">-</span> <span class="inlinecode">2</span>. This makes proofs about <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span>
-    harder when done by induction on <span class="inlinecode"><span class="id" title="var">n</span></span>, since we may need an
-    induction hypothesis about <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">-</span> <span class="inlinecode">2</span>. The following lemma gives an
-    alternative characterization of <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> that works better
-    with induction: 
+ 我们的 <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> 定义中，对 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">-</span> <span class="inlinecode">2</span> 的递归调用有些不便。
+    这使得在对 <span class="inlinecode"><span class="id" title="var">n</span></span> 进行归纳来证明关于 <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode"><span class="id" title="var">n</span></span> 的性质时变得更加困难，
+    因为我们可能会需要一个关于 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">-</span> <span class="inlinecode">2</span> 的「【归纳假设|Induction Hypothesis】」。
+    以下引理给出了 <span class="inlinecode"><span class="id" title="var">even</span></span> <span class="inlinecode">(<span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> 的另一种刻画，它能更好地与归纳协同工作： 
 </div>
 <div class="code">
 
@@ -460,18 +417,15 @@ Use induction to prove this simple fact about <span class="inlinecode"><span cla
 
 
 <div class="doc">
-<a id="lab69"></a><h1 class="section">Proofs Within Proofs</h1>
+<a id="lab69"></a><h1 class="section">证明里的证明</h1>
 
 <div class="paragraph"> </div>
 
- In Rocq, as in informal mathematics, large proofs are often
-    broken into a sequence of theorems, with later proofs referring to
-    earlier theorems.  But sometimes a proof will involve some
-    miscellaneous fact that is too trivial and of too little general
-    interest to bother giving it its own top-level name.  In such
-    cases, it is convenient to be able to simply use the required fact
-    "in place" and then prove it as a separate step.  The <span class="inlinecode"><span class="id" title="tactic">replace</span></span>
-    tactic allows us to do this. 
+ 和在非形式化的数学中一样，在 Rocq 中，大的证明通常会被分为一系列定理，
+    后面的定理引用之前的定理。但有时一个证明会需要一些繁杂琐碎的事实，
+    而这些事实缺乏普遍性，以至于我们甚至都不应该给它们单独取顶级的名字。
+    此时，如果能在需要的地方直接使用该事实，随后在单独的步骤中证明它，
+    就会非常方便。<span class="inlinecode"><span class="id" title="tactic">replace</span></span> 策略能让我们做到这一点。 
 </div>
 <div class="code">
 
@@ -486,24 +440,16 @@ Use induction to prove this simple fact about <span class="inlinecode"><span cla
 </div>
 
 <div class="doc">
-The tactic <span class="inlinecode"><span class="id" title="tactic">replace</span></span> <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span> <span class="inlinecode"><span class="id" title="keyword">with</span></span> <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span> tactic introduces two subgoals.
-
+策略 <span class="inlinecode"><span class="id" title="tactic">replace</span></span> <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span> <span class="inlinecode"><span class="id" title="keyword">with</span></span> <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span> 会引入两个子目标。
+    第一个子目标与我们调用 <span class="inlinecode"><span class="id" title="tactic">replace</span></span> 时的目标相同，只是其中的 <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span>
+    被替换成了 <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span>。第二个子目标则是等式 <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span> 本身。 
 <div class="paragraph"> </div>
 
-    The first subgoal is the same as the one at the point where we
-    invoke <span class="inlinecode"><span class="id" title="tactic">replace</span></span>, except that <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span> is replaced by <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span>.  The
-    second subgoal is the equality <span class="inlinecode"><span class="id" title="var">e<sub>1</sub></span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">e<sub>2</sub></span></span> itself.  
-<div class="paragraph"> </div>
-
- As another example, suppose we want to prove that <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span>)</span>
-    <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" title="var">p</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">q</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" title="var">p</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">q</span>)</span>. The only difference between the
-    two sides of the <span class="inlinecode">=</span> is that the arguments <span class="inlinecode"><span class="id" title="var">m</span></span> and <span class="inlinecode"><span class="id" title="var">n</span></span> to the
-    first inner <span class="inlinecode">+</span> are swapped, so it seems we should be able to use
-    the commutativity of addition (<span class="inlinecode"><span class="id" title="var">add_comm</span></span>) to rewrite one into the
-    other.  However, the <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> tactic is not very smart about
-    <i>where</i> it applies the rewrite.  There are three uses of <span class="inlinecode">+</span> here,
-    and it turns out that doing <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">add_comm</span></span> will affect only
-    the <i>outer</i> one... 
+ 举例来说，假设我们要证明 <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" title="var">p</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">q</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" title="var">p</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">q</span>)</span>。
+    等式 <span class="inlinecode">=</span> 两边唯一的区别就是内层第一个 <span class="inlinecode">+</span> 的参数 <span class="inlinecode"><span class="id" title="var">m</span></span> 和 <span class="inlinecode"><span class="id" title="var">n</span></span> 交换了位置，
+    因此我们似乎应当能够使用加法交换律（<span class="inlinecode"><span class="id" title="var">add_comm</span></span>）来将一侧改写为另一侧。
+    然而，<span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> 策略对于改写作用的「位置」并不够智能。
+    这里一共使用了三次 <span class="inlinecode">+</span>，而执行 <span class="inlinecode"><span class="id" title="tactic">rewrite</span></span> <span class="inlinecode">→</span> <span class="inlinecode"><span class="id" title="var">add_comm</span></span> 只会影响「最外层」的那个…… 
 </div>
 <div class="code">
 
@@ -511,17 +457,16 @@ The tactic <span class="inlinecode"><span class="id" title="tactic">replace</spa
 &nbsp;&nbsp;<a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Induction.html#n:21"><span class="id" title="variable">n</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Induction.html#m:22"><span class="id" title="variable">m</span></a><a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Induction.html#p:23"><span class="id" title="variable">p</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Induction.html#q:24"><span class="id" title="variable">q</span></a><a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a> <a class="idref" href="https://rocq-prover.org/doc/V9.0.0/corelib//Corelib.Init.Logic.html#6cd0f7b28b6092304087c7049437bb1a"><span class="id" title="notation">=</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Induction.html#m:22"><span class="id" title="variable">m</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Induction.html#n:21"><span class="id" title="variable">n</span></a><a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">(</span></a><a class="idref" href="Induction.html#p:23"><span class="id" title="variable">p</span></a> <a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">+</span></a> <a class="idref" href="Induction.html#q:24"><span class="id" title="variable">q</span></a><a class="idref" href="Basics.html#0dacc1786c5ba797d47dd85006231633"><span class="id" title="notation">)</span></a>.<br/>
 <span class="id" title="keyword">Proof</span>.<br/>
 &nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">n</span> <span class="id" title="var">m</span> <span class="id" title="var">p</span> <span class="id" title="var">q</span>.<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;We&nbsp;just&nbsp;need&nbsp;to&nbsp;swap&nbsp;(n&nbsp;+&nbsp;m)&nbsp;for&nbsp;(m&nbsp;+&nbsp;n)...&nbsp;seems<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;like&nbsp;add_comm&nbsp;should&nbsp;do&nbsp;the&nbsp;trick!&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;我们只需要将&nbsp;(m&nbsp;+&nbsp;n)&nbsp;交换为&nbsp;(n&nbsp;+&nbsp;m)...&nbsp;看起来&nbsp;add_comm&nbsp;能搞定！*)</span><br/>
 &nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="Induction.html#add_comm"><span class="id" title="axiom">add_comm</span></a>.<br/>
-&nbsp;&nbsp;<span class="comment">(*&nbsp;Doesn't&nbsp;work...&nbsp;Rocq&nbsp;rewrites&nbsp;the&nbsp;wrong&nbsp;plus!&nbsp;:-(&nbsp;*)</span><br/>
+&nbsp;&nbsp;<span class="comment">(*&nbsp;搞不定...&nbsp;Rocq&nbsp;选错了要改写的加法！&nbsp;*)</span><br/>
 <span class="id" title="keyword">Abort</span>.<br/>
 </div>
 
 <div class="doc">
-To use <span class="inlinecode"><span class="id" title="var">add_comm</span></span> at the point where we need it, we can rewrite
-    <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span></span> to <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span> using <span class="inlinecode"><span class="id" title="tactic">replace</span></span> and then prove <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span>
-    using <span class="inlinecode"><span class="id" title="var">add_comm</span></span>. 
+为了在需要的地方使用 <span class="inlinecode"><span class="id" title="var">add_comm</span></span>，我们可以使用 <span class="inlinecode"><span class="id" title="tactic">replace</span></span>
+    将 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span></span> 改写为 <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span>，然后使用 <span class="inlinecode"><span class="id" title="var">add_comm</span></span>
+    来证明 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">n</span></span>。 
 </div>
 <div class="code">
 
@@ -536,72 +481,55 @@ To use <span class="inlinecode"><span class="id" title="var">add_comm</span></sp
 </div>
 
 <div class="doc">
-<a id="lab70"></a><h1 class="section">Formal vs. Informal Proof</h1>
+<a id="lab70"></a><h1 class="section">形式化证明 vs. 非形式化证明</h1>
 
 <div class="paragraph"> </div>
 
- <div class="quote">"Informal proofs are algorithms; formal proofs are code."</div> 
+ <div class="quote">「【非形式化证明是算法，形式化证明是代码。】」</div> 
 <div class="paragraph"> </div>
 
- What constitutes a successful proof of a mathematical claim?
-
-<div class="paragraph"> </div>
-
-    The question has challenged philosophers for millennia, but a
-    rough and ready answer could be this: A proof of a mathematical
-    proposition <span class="inlinecode"><span class="id" title="var">P</span></span> is a written (or spoken) text that instills in the
-    reader or hearer the certainty that <span class="inlinecode"><span class="id" title="var">P</span></span> is true -- an unassailable
-    argument for the truth of <span class="inlinecode"><span class="id" title="var">P</span></span>.  That is, a proof is an act of
-    communication.
+ 数学声明的成功证明由什么构成？
 
 <div class="paragraph"> </div>
 
-    Acts of communication may involve different sorts of readers.  On
-    one hand, the "reader" can be a program like Rocq, in which case
-    the "belief" that is instilled is that <span class="inlinecode"><span class="id" title="var">P</span></span> can be mechanically
-    derived from a certain set of formal logical rules, and the proof
-    is a recipe that guides the program in checking this fact.  Such
-    recipes are <i>formal</i> proofs.
+    这个问题已经困扰了哲学家数千年，不过这儿有个还算凑合的定义：
+    数学命题 <span class="inlinecode"><span class="id" title="var">P</span></span> 的证明是一段书面（或口头）的文本，它对 <span class="inlinecode"><span class="id" title="var">P</span></span>
+    的真实性进行无可辩驳的论证，逐步说服读者或听者使其确信 <span class="inlinecode"><span class="id" title="var">P</span></span> 为真。
+    也就是说，证明是一种交流行为。
 
 <div class="paragraph"> </div>
 
-    Alternatively, the reader can be a human being, in which case the
-    proof will probably be written in English or some other natural
-    language and will thus necessarily be <i>informal</i>.  Here, the
-    criteria for success are less clearly specified.  A "valid" proof
-    is one that makes the reader believe <span class="inlinecode"><span class="id" title="var">P</span></span>.  But the same proof may
-    be read by many different readers, some of whom may be convinced
-    by a particular way of phrasing the argument, while others may not
-    be. Some readers may be particularly pedantic, inexperienced, or
-    just plain thick-headed; the only way to convince them will be to
-    make the argument in painstaking detail.  Other readers, more
-    familiar in the area, may find all this detail so overwhelming
-    that they lose the overall thread; all they want is to be told the
-    main ideas, since it is easier for them to fill in the details for
-    themselves than to wade through a written presentation of them.
-    Ultimately, there is no universal standard, because there is no
-    single way of writing an informal proof that will convince every
-    conceivable reader.
+    交流活动会涉及不同类型的读者。一方面，「读者」可以是像 Rocq 这样的程序，
+    此时灌输的「确信」是 <span class="inlinecode"><span class="id" title="var">P</span></span> 能够从一个确定的，由形式化逻辑规则组成的集合中
+    机械地推导出来，而证明则是指导程序检验这一事实的方法。这种方法就是
+    【形式化】证明。
 
 <div class="paragraph"> </div>
 
-    In practice, however, mathematicians have developed a rich set of
-    conventions and idioms for writing about complex mathematical
-    objects that -- at least within a certain community -- make
-    communication fairly reliable.  The conventions of this stylized
-    form of communication give a reasonably clear standard for judging
-    proofs good or bad.
+    另一方面，读者也可以是人类，这种情况下证明可以用英语或其它自然语言写出，
+    因此必然是【非形式化】的，此时成功的标准不太明确。一个「有效的」证明是让读者
+    相信 <span class="inlinecode"><span class="id" title="var">P</span></span>。但同一个证明可能被很多不同的读者阅读，其中一些人可能会被某种特定
+    的表述论证方式说服，而其他人则不会。有些读者太爱钻牛角尖，或者缺乏经验，
+    或者只是单纯地过于愚钝，说服他们的唯一方法就是细致入微地进行论证。
+    不过熟悉这一领域的读者可能会觉得所有细节都太过繁琐，让他们无法抓住
+    整体的思路；他们想要的不过是抓住主要思路，因为相对于事无巨细的描述而言，
+    让他们自行补充所需细节更为容易。总之，我们没有一个通用的标准，
+    因为没有一种编写非形式化证明的方式能够说服所能顾及的每一个读者。
 
 <div class="paragraph"> </div>
 
-    Because we are using Rocq in this course, we will be working
-    heavily with formal proofs.  But this doesn't mean we can
-    completely forget about informal ones!  Formal proofs are useful
-    in many ways, but they are <i>not</i> very efficient ways of
-    communicating ideas between human beings. 
+    然而在实践中，数学家们已经发展出了一套用于描述复杂数学对象的约定和习语，
+    这让交流（至少在特定的社区内）变得十分可靠。这种约定俗成的交流形式已然成风，
+    它为证明的好坏给出了清晰的判断标准。
+
 <div class="paragraph"> </div>
 
- For example, here is a proof that addition is associative: 
+    由于我们在本课程中使用 Rocq，因此会重度使用形式化证明。但这并不意味着我们
+    可以完全忽略掉非形式化的证明过程！形式化证明在很多方面都非常有用，
+    不过它们对人类之间的思想交流而言 【并不】 十分高效。 
+<div class="paragraph"> </div>
+
+ 例如，下面是一段加法结合律的证明： 
 </div>
 <div class="code">
 
@@ -612,9 +540,8 @@ To use <span class="inlinecode"><span class="id" title="var">add_comm</span></sp
 </div>
 
 <div class="doc">
-Rocq is perfectly happy with this.  For a human, however, it
-    is difficult to make much sense of it.  We can use comments and
-    bullets to show the structure a little more clearly... 
+Rocq 对此表示十分满意。然而人类却很难理解它。
+    我们可以用注释和标号让它的结构看上去更清晰一点... 
 </div>
 <div class="code">
 
@@ -629,46 +556,42 @@ Rocq is perfectly happy with this.  For a human, however, it
 </div>
 
 <div class="doc">
-... and if you're used to Rocq you might be able to step
-    through the tactics one after the other in your mind and imagine
-    the state of the context and goal stack at each point, but if the
-    proof were even a little bit more complicated this would be next
-    to impossible.
+而且如果你习惯了 Rocq，你可能会在脑袋里逐步过一遍策略，并想象出
+    每一处语境和目标栈的状态。不过若证明再复杂一点，那就几乎不可能了。
 
 <div class="paragraph"> </div>
 
-    A (pedantic) mathematician might write the proof something like
-    this: 
+    一个（迂腐的）数学家可能把证明写成这样： 
 <div class="paragraph"> </div>
 
 <ul class="doclist">
-<li> <i>Theorem</i>: For any <span class="inlinecode"><span class="id" title="var">n</span></span>, <span class="inlinecode"><span class="id" title="var">m</span></span> and <span class="inlinecode"><span class="id" title="var">p</span></span>,
+<li> 【定理】：对于任何 <span class="inlinecode"><span class="id" title="var">n</span></span>、<span class="inlinecode"><span class="id" title="var">m</span></span> 和 <span class="inlinecode"><span class="id" title="var">p</span></span>，
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">n</span> + (<span class="id" title="var">m</span> + <span class="id" title="var">p</span>) = (<span class="id" title="var">n</span> + <span class="id" title="var">m</span>) + <span class="id" title="var">p</span>.
-</span>    <i>Proof</i>: By induction on <span class="inlinecode"><span class="id" title="var">n</span></span>.
+</span>    【证明】：对 <span class="inlinecode"><span class="id" title="var">n</span></span> 使用归纳法。
 
 <div class="paragraph"> </div>
 
 <ul class="doclist">
-<li> First, suppose <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>.  We must show that
+<li> 首先，设 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>。我们必须证明
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 + (<span class="id" title="var">m</span> + <span class="id" title="var">p</span>) = (0 + <span class="id" title="var">m</span>) + <span class="id" title="var">p</span>.
-</span>      This follows directly from the definition of <span class="inlinecode">+</span>.
+</span>      此结论可从 <span class="inlinecode">+</span> 的定义直接得到。
 
 <div class="paragraph"> </div>
 
 
 </li>
-<li> Next, suppose <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span>, where
+<li> 然后，设 <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">S</span></span> <span class="inlinecode"><span class="id" title="var">n'</span></span>，其中
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">n'</span> + (<span class="id" title="var">m</span> + <span class="id" title="var">p</span>) = (<span class="id" title="var">n'</span> + <span class="id" title="var">m</span>) + <span class="id" title="var">p</span>.
-</span>      We must now show that
+</span>      我们必须证明
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">S</span> <span class="id" title="var">n'</span>) + (<span class="id" title="var">m</span> + <span class="id" title="var">p</span>) = ((<span class="id" title="var">S</span> <span class="id" title="var">n'</span>) + <span class="id" title="var">m</span>) + <span class="id" title="var">p</span>.
-</span>      By the definition of <span class="inlinecode">+</span>, this follows from
+</span>      根据 <span class="inlinecode">+</span> 的定义，该式可写成
 <br/>
 <span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">S</span> (<span class="id" title="var">n'</span> + (<span class="id" title="var">m</span> + <span class="id" title="var">p</span>)) = <span class="id" title="var">S</span> ((<span class="id" title="var">n'</span> + <span class="id" title="var">m</span>) + <span class="id" title="var">p</span>),
-</span>      which is immediate from the induction hypothesis.  <i>Qed</i>. 
+</span>      它由归纳假设直接得出。【证毕】。 
 </li>
 </ul>
 
@@ -677,28 +600,23 @@ Rocq is perfectly happy with this.  For a human, however, it
 
 <div class="paragraph"> </div>
 
- The overall form of the proof is basically similar, and of
-    course this is no accident: Rocq has been designed so that its
-    <span class="inlinecode"><span class="id" title="tactic">induction</span></span> tactic generates the same sub-goals, in the same
-    order, as the bullet points that a mathematician would usually
-    write.  But there are significant differences of detail: the
-    formal proof is much more explicit in some ways (e.g., the use of
-    <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span>) but much less explicit in others (in particular,
-    the "proof state" at any given point in the Rocq proof is
-    completely implicit, whereas the informal proof reminds the reader
-    several times where things stand). 
+ 证明的总体形式大体类似，当然这并非偶然：Rocq 的设计使其 <span class="inlinecode"><span class="id" title="tactic">induction</span></span>
+    策略会像数学家写出的标号那样，按相同的顺序生成相同的子目标。但在细节上则有
+    明显的不同：形式化证明在某些方面更为明确（例如对 <span class="inlinecode"><span class="id" title="tactic">reflexivity</span></span> 的使用），
+    但在其它方面则不够明确（特别是 Rocq 证明中任何一处的「证明状态」都是完全
+    隐含的，而非形式化证明则经常反复提醒读者目前证明进行的状态）。 
 <div class="paragraph"> </div>
 
 <a id="lab71"></a><h4 class="section">Exercise: 2 stars, advanced, optional (add_comm_informal)</h4>
- Translate your solution for <span class="inlinecode"><span class="id" title="var">add_comm</span></span> into an informal proof:
+ 将你对 <span class="inlinecode"><span class="id" title="var">add_comm</span></span> 的解答翻译成非形式化证明：
 
 <div class="paragraph"> </div>
 
-    Theorem: Addition is commutative.
+    定理：加法满足交换律。
 
 <div class="paragraph"> </div>
 
-    Proof: <span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+    证明：<span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
 
 </div>
 <div class="code">
@@ -712,17 +630,16 @@ Rocq is perfectly happy with this.  For a human, however, it
 <div class="paragraph"> </div>
 
 <a id="lab72"></a><h4 class="section">Exercise: 2 stars, standard, optional (eqb_refl_informal)</h4>
- Write an informal proof of the following theorem, using the
-    informal proof of <span class="inlinecode"><span class="id" title="var">add_assoc</span></span> as a model.  Don't just
-    paraphrase the Rocq tactics into English!
+ 以 <span class="inlinecode"><span class="id" title="var">add_assoc</span></span> 的非形式化证明为范本，写出以下定理的非形式化证明。
+    不要只是用中文来解释 Rocq 策略！
 
 <div class="paragraph"> </div>
 
-    Theorem: <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">=?</span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">true</span></span> for any <span class="inlinecode"><span class="id" title="var">n</span></span>.
+    定理：对于任何 <span class="inlinecode"><span class="id" title="var">n</span></span>，均有 <span class="inlinecode">(<span class="id" title="var">n</span></span> <span class="inlinecode">=?</span> <span class="inlinecode"><span class="id" title="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" title="var">true</span></span>。
 
 <div class="paragraph"> </div>
 
-    Proof: <span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
+    证明： <span class="comment">(*&nbsp;FILL&nbsp;IN&nbsp;HERE&nbsp;*)</span><br/>
 
 </div>
 <div class="code">
@@ -734,13 +651,12 @@ Rocq is perfectly happy with this.  For a human, however, it
 
 
 <div class="doc">
-<a id="lab73"></a><h1 class="section">More Exercises</h1>
+<a id="lab73"></a><h1 class="section">更多练习</h1>
 
 <div class="paragraph"> </div>
 
 <a id="lab74"></a><h4 class="section">Exercise: 3 stars, standard, especially useful (mul_comm)</h4>
- Use <span class="inlinecode"><span class="id" title="tactic">replace</span></span> to help prove <span class="inlinecode"><span class="id" title="var">add_shuffle3</span></span>.  You don't need to
-    use induction yet. 
+ 用 <span class="inlinecode"><span class="id" title="tactic">replace</span></span> 来帮助证明  <span class="inlinecode"><span class="id" title="var">add_shuffle3</span></span>。你应该不需要使用归纳法。 
 </div>
 <div class="code">
 
@@ -751,9 +667,8 @@ Rocq is perfectly happy with this.  For a human, however, it
 </div>
 
 <div class="doc">
-Now prove commutativity of multiplication.  You will probably want
-    to look for (or define and prove) a "helper" theorem to be used in
-    the proof of this one. Hint: what is <span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">×</span> <span class="inlinecode">(1</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">k</span>)</span>? 
+现在证明乘法交换律。（你在证明过程中可能想要定义并证明一个辅助定理。
+    提示：<span class="inlinecode"><span class="id" title="var">n</span></span> <span class="inlinecode">×</span> <span class="inlinecode">(1</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" title="var">k</span>)</span> 是什么？） 
 </div>
 <div class="code">
 
@@ -768,13 +683,9 @@ Now prove commutativity of multiplication.  You will probably want
 <div class="paragraph"> </div>
 
 <a id="lab75"></a><h4 class="section">Exercise: 3 stars, standard, optional (more_exercises)</h4>
- Take a piece of paper.  For each of the following theorems, first
-    <i>think</i> about whether (a) it can be proved using only
-    simplification and rewriting, (b) it also requires case
-    analysis (<span class="inlinecode"><span class="id" title="tactic">destruct</span></span>), or (c) it also requires induction.  Write
-    down your prediction.  Then fill in the proof.  (There is no need
-    to turn in your piece of paper; this is just to encourage you to
-    reflect before you hack!) 
+ 找一张纸。对于以下定理，首先请 【思考】 (a) 它能否能只用化简和改写来证明，
+    (b) 它还需要分类讨论（<span class="inlinecode"><span class="id" title="tactic">destruct</span></span>），以及 (c) 它还需要归纳证明。先写下你的
+    预判，然后填写下面的证明（你的纸不用交上来，这只是鼓励你先思考再行动！） 
 </div>
 <div class="code">
 
@@ -819,11 +730,11 @@ Now prove commutativity of multiplication.  You will probably want
 <div class="doc"> 
 <div class="paragraph"> </div>
 
-<a id="lab76"></a><h1 class="section">Nat to Bin and Back to Nat</h1>
+<a id="lab76"></a><h1 class="section">从 Nat 到 Bin 再到 Nat</h1>
 
 <div class="paragraph"> </div>
 
- Recall the <span class="inlinecode"><span class="id" title="var">bin</span></span> type we defined in <a href="Basics.html"><span class="inlineref">Basics</span></a>: 
+ 回顾我们在 <a href="Basics.html"><span class="inlineref">Basics</span></a> 中定义的 <span class="inlinecode"><span class="id" title="var">bin</span></span> 类型： 
 </div>
 <div class="code">
 
@@ -835,10 +746,9 @@ Now prove commutativity of multiplication.  You will probably want
 </div>
 
 <div class="doc">
-Before you start working on the next exercise, replace the stub
-    definitions of <span class="inlinecode"><span class="id" title="var">incr</span></span> and <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span>, below, with your solution
-    from <a href="Basics.html"><span class="inlineref">Basics</span></a>.  That will make it possible for this file to
-    be graded on its own. 
+在开始下一个练习之前，请将下面 <span class="inlinecode"><span class="id" title="var">incr</span></span> 和 <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span>
+    的占位定义替换为你在 <a href="Basics.html"><span class="inlineref">Basics</span></a> 中给出的解答。
+    这样本文件就可以独立进行评分。 
 </div>
 <div class="code">
 
@@ -849,12 +759,12 @@ Before you start working on the next exercise, replace the stub
 </div>
 
 <div class="doc">
-In <a href="Basics.html"><span class="inlineref">Basics</span></a>, we did some unit testing of <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span>, but we
-    didn't prove its correctness. Now we'll do so. 
+在 <a href="Basics.html"><span class="inlineref">Basics</span></a> 一章中，我们对 <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span> 进行了一些单元测试，
+    但没有证明其正确性。现在我们将证明它。 
 <div class="paragraph"> </div>
 
 <a id="lab77"></a><h4 class="section">Exercise: 3 stars, standard, especially useful (binary_commute)</h4>
- Prove that the following diagram commutes:
+ 证明下图可交换：
 
 <div class="paragraph"> </div>
 
@@ -868,14 +778,13 @@ In <a href="Basics.html"><span class="inlineref">Basics</span></a>, we did some 
               nat --------------------<span class="nowrap"><span style='font-size:85%;'><span style='vertical-align:6%;'><span style='letter-spacing:-.2em;'>-</span><span style='letter-spacing:-.2em;'>-</span></span>&gt;</span></span> nat
                              S
 </pre>
-    That is, incrementing a binary number and then converting it to
-    a (unary) natural number yields the same result as first converting
-    it to a natural number and then incrementing.
+    也就是说，一个二进制数先自增然后将它转换为（一进制）自然数，和先将它转换为
+    自然数后再自增会产生相同的结果。
 
 <div class="paragraph"> </div>
 
-    If you want to change your previous definitions of <span class="inlinecode"><span class="id" title="var">incr</span></span> or <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span>
-    to make the property easier to prove, feel free to do so! 
+    如果你想修改之前对 <span class="inlinecode"><span class="id" title="var">incr</span></span> 或 <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span> 的定义，让此性质更容易证明，
+    请随意！ 
 </div>
 <div class="code">
 
@@ -893,7 +802,7 @@ In <a href="Basics.html"><span class="inlineref">Basics</span></a>, we did some 
 
 <div class="paragraph"> </div>
 
- Write a function to convert natural numbers to binary numbers. 
+ 编写一个函数，将自然数转换为二进制数。 
 </div>
 <div class="code">
 
@@ -902,17 +811,15 @@ In <a href="Basics.html"><span class="inlineref">Basics</span></a>, we did some 
 </div>
 
 <div class="doc">
-Prove that, if we start with any <span class="inlinecode"><span class="id" title="var">nat</span></span>, convert it to <span class="inlinecode"><span class="id" title="var">bin</span></span>, and
-    convert it back, we get the same <span class="inlinecode"><span class="id" title="var">nat</span></span> which we started with.
+证明：如果我们从任意 <span class="inlinecode"><span class="id" title="var">nat</span></span> 开始，将它转换为 <span class="inlinecode"><span class="id" title="var">bin</span></span>，然后再转换回来，
+    就会得到开始时的同一个 <span class="inlinecode"><span class="id" title="var">nat</span></span>。
 
 <div class="paragraph"> </div>
 
-    Hint: This proof should go through smoothly using the previous
-    exercise about <span class="inlinecode"><span class="id" title="var">incr</span></span> as a lemma. If not, revisit your definitions
-    of the functions involved and consider whether they are more
-    complicated than necessary: the shape of a proof by induction will
-    match the recursive structure of the program being verified, so
-    make the recursions as simple as possible. 
+    提示：这个证明应当能顺利地使用之前关于 <span class="inlinecode"><span class="id" title="var">incr</span></span> 的练习作为
+    【引理|Lemma】来完成。如果不能，请重新审视所涉及函数的定义，
+    并考虑它们是否比必要的更复杂：归纳证明的形状会匹配被验证程序的
+    【递归结构|Recursive Structure】，所以请让递归尽可能简单。 
 </div>
 <div class="code">
 
@@ -925,13 +832,12 @@ Prove that, if we start with any <span class="inlinecode"><span class="id" title
 <div class="doc"> 
 <div class="paragraph"> </div>
 
-<a id="lab79"></a><h1 class="section">Bin to Nat and Back to Bin (Advanced)</h1>
+<a id="lab79"></a><h1 class="section">从二进制到自然数再回到二进制（进阶）</h1>
 
 <div class="paragraph"> </div>
 
- The opposite direction -- starting with a <span class="inlinecode"><span class="id" title="var">bin</span></span>, converting to <span class="inlinecode"><span class="id" title="var">nat</span></span>,
-    then converting back to <span class="inlinecode"><span class="id" title="var">bin</span></span> -- turns out to be problematic. That
-    is, the following theorem does not hold. 
+ 反方向，即从一个 <span class="inlinecode"><span class="id" title="var">bin</span></span> 开始，将它转换为 <span class="inlinecode"><span class="id" title="var">nat</span></span>，然后再转换回 <span class="inlinecode"><span class="id" title="var">bin</span></span>，
+    这样会出问题。也就是说，以下「【定理|Theorem】」并不成立。 
 </div>
 <div class="code">
 
@@ -940,17 +846,15 @@ Prove that, if we start with any <span class="inlinecode"><span class="id" title
 </div>
 
 <div class="doc">
-Let's explore why that theorem fails, and how to prove a modified
-    version of it. We'll start with some lemmas that might seem
-    unrelated, but will turn out to be relevant. 
+让我们探究一下为什么该定理会失败，以及如何证明它的一个修改版本。
+    我们会先从一些看似无关、但最终会相关的引理开始。 
 <div class="paragraph"> </div>
 
 <a id="lab80"></a><h4 class="section">Exercise: 2 stars, advanced (double_bin)</h4>
 
 <div class="paragraph"> </div>
 
- Prove this lemma about <span class="inlinecode"><span class="id" title="var">double</span></span>, which we defined earlier in the
-    chapter. 
+ 证明这个关于 <span class="inlinecode"><span class="id" title="var">double</span></span> 的引理，它是我们在本章前面定义的。 
 </div>
 <div class="code">
 
@@ -960,7 +864,7 @@ Let's explore why that theorem fails, and how to prove a modified
 </div>
 
 <div class="doc">
-Now define a similar doubling function for <span class="inlinecode"><span class="id" title="var">bin</span></span>. 
+现在为 <span class="inlinecode"><span class="id" title="var">bin</span></span> 定义一个类似的倍增函数。 
 </div>
 <div class="code">
 
@@ -969,7 +873,7 @@ Now define a similar doubling function for <span class="inlinecode"><span class=
 </div>
 
 <div class="doc">
-Check that your function correctly doubles zero. 
+检查你的函数是否正确地将零倍增。 
 </div>
 <div class="code">
 
@@ -978,7 +882,7 @@ Check that your function correctly doubles zero.
 </div>
 
 <div class="doc">
-Prove this lemma, which corresponds to <span class="inlinecode"><span class="id" title="var">double_incr</span></span>. 
+证明这个与 <span class="inlinecode"><span class="id" title="var">double_incr</span></span> 对应的引理。 
 </div>
 <div class="code">
 
@@ -992,7 +896,7 @@ Prove this lemma, which corresponds to <span class="inlinecode"><span class="id"
 <div class="doc"> 
 <div class="paragraph"> </div>
 
- Let's return to our desired theorem: 
+ 让我们回到想要的定理： 
 </div>
 <div class="code">
 
@@ -1001,19 +905,16 @@ Prove this lemma, which corresponds to <span class="inlinecode"><span class="id"
 </div>
 
 <div class="doc">
-The theorem fails because there are some <span class="inlinecode"><span class="id" title="var">bin</span></span> such that we won't
-    necessarily get back to the <i>original</i> <span class="inlinecode"><span class="id" title="var">bin</span></span>, but instead to an
-    "equivalent" <span class="inlinecode"><span class="id" title="var">bin</span></span>.  (We deliberately leave that notion undefined
-    here for you to think about.)
+该定理会失败，是因为存在某些 <span class="inlinecode"><span class="id" title="var">bin</span></span>，使得我们不一定会得到
+    【原始】的 <span class="inlinecode"><span class="id" title="var">bin</span></span>，而是会得到一个「【等价|Equivalent】」的 <span class="inlinecode"><span class="id" title="var">bin</span></span>。
+    （我们有意在这里不定义这个概念，留给你思考。）
 
 <div class="paragraph"> </div>
 
-    Explain in a comment, below, why this failure occurs. Your
-    explanation will not be graded, but it's important that you get it
-    clear in your mind before going on to the next part. If you're
-    stuck on this, think about alternative implementations of
-    <span class="inlinecode"><span class="id" title="var">double_bin</span></span> that might have failed to satisfy <span class="inlinecode"><span class="id" title="var">double_bin_zero</span></span>
-    yet otherwise seem correct. 
+    请在下面的注释中解释为什么会发生这种失败。你的解释不会被评分，
+    但在继续下一部分之前，在脑中把它弄清楚很重要。如果你卡在这里，
+    请想一想 <span class="inlinecode"><span class="id" title="var">double_bin</span></span> 的其它实现：它们可能无法满足 <span class="inlinecode"><span class="id" title="var">double_bin_zero</span></span>，
+    但在其它方面看起来是正确的。 
 </div>
 <div class="code">
 
@@ -1021,25 +922,22 @@ The theorem fails because there are some <span class="inlinecode"><span class="i
 </div>
 
 <div class="doc">
-To solve that problem, we can introduce a <i>normalization</i> function
-    that selects the simplest <span class="inlinecode"><span class="id" title="var">bin</span></span> out of all the equivalent
-    <span class="inlinecode"><span class="id" title="var">bin</span></span>. Then we can prove that the conversion from <span class="inlinecode"><span class="id" title="var">bin</span></span> to <span class="inlinecode"><span class="id" title="var">nat</span></span> and
-    back again produces that normalized, simplest <span class="inlinecode"><span class="id" title="var">bin</span></span>. 
+为了解决这个问题，我们可以引入一个【规范化】函数，它会从所有等价的
+    <span class="inlinecode"><span class="id" title="var">bin</span></span> 中选出最简单的那个。然后我们可以证明，从 <span class="inlinecode"><span class="id" title="var">bin</span></span> 转换到 <span class="inlinecode"><span class="id" title="var">nat</span></span>
+    再转换回来，会产生那个经过规范化的、最简单的 <span class="inlinecode"><span class="id" title="var">bin</span></span>。 
 <div class="paragraph"> </div>
 
 <a id="lab81"></a><h4 class="section">Exercise: 4 stars, advanced (bin_nat_bin)</h4>
 
 <div class="paragraph"> </div>
 
- Define <span class="inlinecode"><span class="id" title="var">normalize</span></span>. You will need to keep its definition as simple
-    as possible for later proofs to go smoothly. Do not use
-    <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span> or <span class="inlinecode"><span class="id" title="var">nat_to_bin</span></span>, but do use <span class="inlinecode"><span class="id" title="var">double_bin</span></span>.
+ 定义 <span class="inlinecode"><span class="id" title="var">normalize</span></span>。你需要让它的定义尽可能简单，以便之后的证明能够顺利进行。
+    不要使用 <span class="inlinecode"><span class="id" title="var">bin_to_nat</span></span> 或 <span class="inlinecode"><span class="id" title="var">nat_to_bin</span></span>，但要使用 <span class="inlinecode"><span class="id" title="var">double_bin</span></span>。
 
 <div class="paragraph"> </div>
 
-    Hint: Structure the recursion such that it <i>always</i> reaches the
-    end of the <span class="inlinecode"><span class="id" title="var">bin</span></span> and <i>only</i> processes each bit only once. Do not
-    try to "look ahead" at future bits. 
+    提示：组织递归，使其【总是】到达 <span class="inlinecode"><span class="id" title="var">bin</span></span> 的末尾，并且【只】处理每一位一次。
+    不要试图「向后查看」未来的位。 
 </div>
 <div class="code">
 
@@ -1048,9 +946,8 @@ To solve that problem, we can introduce a <i>normalization</i> function
 </div>
 
 <div class="doc">
-It would be wise to do some <span class="inlinecode"><span class="id" title="keyword">Example</span></span> proofs to check that your definition of
-    <span class="inlinecode"><span class="id" title="var">normalize</span></span> works the way you intend before you proceed. They won't be graded,
-    but fill them in below. 
+在继续之前，最好做一些 <span class="inlinecode"><span class="id" title="keyword">Example</span></span> 证明，检查你对 <span class="inlinecode"><span class="id" title="var">normalize</span></span> 的定义是否按
+    预期工作。它们不会被评分，但请在下面填上它们。 
 </div>
 <div class="code">
 
@@ -1058,16 +955,14 @@ It would be wise to do some <span class="inlinecode"><span class="id" title="key
 </div>
 
 <div class="doc">
-Finally, prove the main theorem. The inductive cases could be a
-    bit tricky.
+最后，证明主定理。归纳情况可能有点棘手。
 
 <div class="paragraph"> </div>
 
-    Hint: Start by trying to prove the main statement, see where you
-    get stuck, and see if you can find a lemma -- perhaps requiring
-    its own inductive proof -- that will allow the main proof to make
-    progress. We have one lemma for the <span class="inlinecode"><span class="id" title="var">B<sub>0</sub></span></span> case (which also makes
-    use of <span class="inlinecode"><span class="id" title="var">double_incr_bin</span></span>) and another for the <span class="inlinecode"><span class="id" title="var">B<sub>1</sub></span></span> case. 
+    提示：先尝试证明主陈述，看看你会在哪里卡住，再看看能否找到一个引理
+    （它或许需要自己的归纳证明），从而让主证明取得进展。我们有一个用于 <span class="inlinecode"><span class="id" title="var">B<sub>0</sub></span></span>
+    情况的引理（它也会用到 <span class="inlinecode"><span class="id" title="var">double_incr_bin</span></span>），以及另一个用于 <span class="inlinecode"><span class="id" title="var">B<sub>1</sub></span></span>
+    情况的引理。 
 </div>
 <div class="code">
 
@@ -1079,7 +974,7 @@ Finally, prove the main theorem. The inductive cases could be a
 
 <div class="code">
 
-<span class="comment">(*&nbsp;2026-06-19&nbsp;17:45&nbsp;*)</span><br/>
+<span class="comment">(*&nbsp;2026-06-19&nbsp;18:13&nbsp;*)</span><br/>
 </div>
 </div>
 

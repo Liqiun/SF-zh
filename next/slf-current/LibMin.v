@@ -258,4 +258,4 @@ Definition MMax `{Inhab A} `{Le A} := mmax le.
 
 
 
-(* 2026-06-19 17:48 *)
+(* 2026-06-19 18:16 *)

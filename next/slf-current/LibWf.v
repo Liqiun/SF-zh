@@ -596,4 +596,4 @@ Proof using.
   induction 1; eauto using Acc_inv.
 Qed.
 
-(* 2026-06-19 17:48 *)
+(* 2026-06-19 18:16 *)

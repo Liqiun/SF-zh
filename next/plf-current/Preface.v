@@ -157,7 +157,7 @@
 		     Andrew Tolmach and
 		     Brent Yorgey},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Programming Language Foundations",
+    title        =   "编程语言基础",
     series       =   "Software Foundations",
     volume       =   "2",
     year         =   "2026",
@@ -183,4 +183,4 @@
     NSF Expeditions grant 1521523, _The Science of Deep
     Specification_. *)
 
-(* 2026-06-19 17:46 *)
+(* 2026-06-19 18:14 *)

@@ -3,7 +3,7 @@ body {
     margin: 0px 0px;
     padding-left: 1em;
     background-color: white;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Noto Sans CJK SC', sans-serif;
     background-repeat: no-repeat;
     background-size: 100%;
 }
@@ -181,7 +181,7 @@ h4.section {
 }
 
 #header p {
-    font-size: 13px;
+    font-size: 16px;
 }
 
 /* Sets up Main ID and margins */
@@ -219,13 +219,13 @@ pre {
     display: inline;
     /* font-size: 125%; */
     color: #444444;
-    font-family: monospace }
+    font-family: 'Monaspace Neon NF', monospace }
 
 .doc .inlinecode {
     display: inline;
     font-size: 105%;
     color: rgb(35%,35%,70%);
-    font-family: monospace }
+    font-family: 'Monaspace Neon NF', monospace }
 
 .doc .inlinecode .id {
 /* I am changing this to white in style below:
@@ -254,15 +254,15 @@ h1 .inlinecode .id, h1.section span.inlinecode {
 
 .doc .code {
     display: inline;
-    font-size: 120%;
+    font-size: 110%;
     color: rgb(35%,35%,70%);
-    font-family: monospace;
+    font-family: 'Monaspace Neon NF', monospace;
     padding-left: 0px;
 }
 
 .comment {
     display: inline;
-    font-family: monospace;
+    font-family: 'Monaspace Neon NF', monospace;
     color: rgb(50%,50%,80%);
 }
 
@@ -280,7 +280,7 @@ h1 .inlinecode .id, h1.section span.inlinecode {
 .show {
     background-color: rgb(93%,93%,93%);
     display: inline;
-    font-family: monospace;
+    font-family: 'Monaspace Neon NF', monospace;
     font-size: 60%;
     padding-top: 1px;
     padding-bottom: 2px;
@@ -342,7 +342,7 @@ div.hidden {
 /* For textual ones... */
 .show-old {
     display: inline;
-    font-family: monospace;
+    font-family: 'Monaspace Neon NF', monospace;
     font-size: 80%;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -360,8 +360,8 @@ div.hidden {
 
 .code {
     padding-left: 20px;
-    font-size: 110%;
-    font-family: monospace;
+    font-size: 100%;
+    font-family: 'Monaspace Neon NF', monospace;
     line-height: 17px;
     margin-top: 9px;
 }
@@ -416,7 +416,7 @@ table.infrule {
 }
 
 td.infrule {
-    font-family: monospace;
+    font-family: 'Monaspace Neon NF', monospace;
     text-align: center;
     /*    color: rgb(35%,35%,70%);  */
     padding: 0px;
@@ -737,7 +737,7 @@ ul.doclist {
     width: 43%;
     margin:0 10px;
     text-align: left;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 25px;
     padding-right: 20px;
     min-height: 340px;
@@ -783,7 +783,7 @@ div.column.pub table tbody tr td {
 div.column.pub table tbody tr td p {
     text-align: left;
     margin-top: 0;
-    font-weight: 600;
+    font-weight: 450;
     font-size: 13px!important;
     line-height: 18px;
 }

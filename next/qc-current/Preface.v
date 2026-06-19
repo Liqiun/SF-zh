@@ -27,7 +27,7 @@
     @book            {Lampropoulos:SF4,
     author       =   {Leonidas Lampropoulos and Benjamin C. Pierce},
     editor       =   {Benjamin C. Pierce},
-    title        =   "QuickChick: Property-Based Testing in Rocq",
+    title        =   "QuickChick：Rocq 基于性质的测试",
     series       =   "Software Foundations",
     volume       =   "4",
     year         =   "2026",
@@ -45,4 +45,4 @@
     Specification_.  Work on this volume was also supported by NSF
     grant 1421243, _Random Testing for Language Design_. *)
 
-(* 2026-06-19 17:51 *)
+(* 2026-06-19 18:19 *)

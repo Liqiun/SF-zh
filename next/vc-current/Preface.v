@@ -145,7 +145,7 @@
     @book            {Appel:SF5,
     author       =   {Andrew W. Appel, Lennart Beringer, and Qinxiang Cao},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Verifiable C",
+    title        =   "可验证的 C",
     series       =   "Software Foundations",
     volume       =   "5",
     year         =   "2026",
@@ -210,4 +210,4 @@ to install the properly configured clightgen outputs."
 "It is not necessary to have clightgen installed".
 Abort.
 
-(* 2026-06-19 17:53 *)
+(* 2026-06-19 18:20 *)

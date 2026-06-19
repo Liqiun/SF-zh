@@ -277,7 +277,7 @@
     @book            {Chargueraud:SF6,
     author       =   {Arthur Charguéraud},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Separation Logic Foundations",
+    title        =   "分离逻辑基础",
     series       =   "Software Foundations",
     volume       =   "6",
     year         =   "2026",
@@ -294,4 +294,4 @@
     Foundation under the NSF Expeditions grant 1521523, _The Science of Deep
     Specification_. *)
 
-(* 2026-06-19 17:48 *)
+(* 2026-06-19 18:16 *)

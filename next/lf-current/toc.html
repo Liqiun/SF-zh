@@ -9,6 +9,8 @@
 <script src="common/jquery-ui/external/jquery/jquery.js"></script>
 <script src="common/jquery-ui/jquery-ui.js"></script>
 <script src="common/toggleproofs.js"></script>
+<script src="common/term.js" defer></script>
+<link href="common/css/term.css" rel="stylesheet" type="text/css"/>
 <link href="common/css/lf.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -41,11 +43,11 @@ $( function() {
 <div id="header">
 <div id='logoinheader'><a href='https://softwarefoundations.cis.upenn.edu'>
 <img src='common/media/image/sf_logo_sm.png' alt='Software Foundations Logo'></a></div>
-<div class='booktitleinheader'><a href='index.html'>Volume 1: Logical Foundations</a></div>
+<div class='booktitleinheader'><a href='index.html'>Volume 1: 逻辑基础</a></div>
 <ul id='menu'>
-   <li class='section_name'><a href='toc.html'>Table of Contents</a></li>
-   <li class='section_name'><a href='coqindex.html'>Index</a></li>
-   <li class='section_name'><a href='deps.html'>Roadmap</a></li>
+   <li class='section_name'><a href='toc.html'>目录</a></li>
+   <li class='section_name'><a href='coqindex.html'>索引</a></li>
+   <li class='section_name'><a href='deps.html'>路线</a></li>
 </ul>
 </div>
 </div>
@@ -57,190 +59,190 @@ $( function() {
 <h2><a href="Preface.html">Preface</a></h2>
 <div>
 <ul class="doclist">
-<li><a href="Preface.html#lab1">Welcome</a>
+<li><a href="Preface.html#lab1">欢迎</a>
 
 </li>
-<li><a href="Preface.html#lab2">Overview</a>
+<li><a href="Preface.html#lab2">概览</a>
 <div>
 <ul class="doclist">
-<li><a href="Preface.html#lab3">Logic</a>
+<li><a href="Preface.html#lab3">逻辑学</a>
 
 </li>
-<li><a href="Preface.html#lab4">Proof Assistants</a>
+<li><a href="Preface.html#lab4">证明助理</a>
 
 </li>
-<li><a href="Preface.html#lab5">Functional Programming</a>
+<li><a href="Preface.html#lab5">函数式编程</a>
 
 </li>
 <li><a href="Preface.html#lab6">Rocq vs. Coq</a>
 
 </li>
-<li><a href="Preface.html#lab7">Further Reading</a>
+<li><a href="Preface.html#lab7">扩展阅读</a>
 
 </li>
 </ul>
 </div>
 
 </li>
-<li><a href="Preface.html#lab8">Practicalities</a>
+<li><a href="Preface.html#lab8">实践指南</a>
 <div>
 <ul class="doclist">
-<li><a href="Preface.html#lab9">System Requirements</a>
+<li><a href="Preface.html#lab9">系统要求</a>
 
 </li>
-<li><a href="Preface.html#lab11">Alternative Installation Methods</a>
+<li><a href="Preface.html#lab11">另一种安装方法</a>
 
 </li>
-<li><a href="Preface.html#lab12">Exercises</a>
+<li><a href="Preface.html#lab12">练习</a>
 
 </li>
-<li><a href="Preface.html#lab13">Downloading the Rocq Files</a>
+<li><a href="Preface.html#lab13">下载 Rocq 文件</a>
 
 </li>
-<li><a href="Preface.html#lab14">Chapter Dependencies</a>
+<li><a href="Preface.html#lab14">章节依赖</a>
 
 </li>
-<li><a href="Preface.html#lab15">Recommended Citation Format</a>
+<li><a href="Preface.html#lab15">推荐的引用格式</a>
 
 </li>
 </ul>
 </div>
 
 </li>
-<li><a href="Preface.html#lab16">Resources</a>
+<li><a href="Preface.html#lab16">资源</a>
 <div>
 <ul class="doclist">
-<li><a href="Preface.html#lab17">Sample Exams</a>
+<li><a href="Preface.html#lab17">模拟题</a>
 
 </li>
-<li><a href="Preface.html#lab18">Lecture Videos</a>
-
-</li>
-</ul>
-</div>
-
-</li>
-<li><a href="Preface.html#lab19">Note for Instructors and Contributors</a>
-
-</li>
-<li><a href="Preface.html#lab20">Translations</a>
-
-</li>
-<li><a href="Preface.html#lab21">Thanks</a>
+<li><a href="Preface.html#lab18">课程视频</a>
 
 </li>
 </ul>
 </div>
-<h2><a href="Basics.html">Functional Programming in Rocq &nbsp;&nbsp; (<i>Basics</i>)</a></h2>
+
+</li>
+<li><a href="Preface.html#lab19">对授课员的要求</a>
+
+</li>
+<li><a href="Preface.html#lab20">译本</a>
+
+</li>
+<li><a href="Preface.html#lab21">鸣谢</a>
+
+</li>
+</ul>
+</div>
+<h2><a href="Basics.html">Rocq 函数式编程 &nbsp;&nbsp; (<i>Basics</i>)</a></h2>
 <div>
 <ul class="doclist">
-<li><a href="Basics.html#lab22">Introduction</a>
-
-</li>
-<li><a href="Basics.html#lab23">Homework Submission Guidelines</a>
-
-</li>
-<li><a href="Basics.html#lab24">Data and Functions</a>
+<li><a href="Basics.html#lab22">引言</a>
 <div>
 <ul class="doclist">
-<li><a href="Basics.html#lab25">Enumerated Types</a>
-
-</li>
-<li><a href="Basics.html#lab26">Days of the Week</a>
-
-</li>
-<li><a href="Basics.html#lab27">Booleans</a>
-
-</li>
-<li><a href="Basics.html#lab30">Types</a>
-
-</li>
-<li><a href="Basics.html#lab31">New Types from Old</a>
-
-</li>
-<li><a href="Basics.html#lab32">Modules</a>
-
-</li>
-<li><a href="Basics.html#lab33">Tuples</a>
-
-</li>
-<li><a href="Basics.html#lab34">Numbers</a>
+<li><a href="Basics.html#lab23">作业提交指南</a>
 
 </li>
 </ul>
 </div>
 
 </li>
-<li><a href="Basics.html#lab37">Proof by Simplification</a>
-
-</li>
-<li><a href="Basics.html#lab38">Proof by Rewriting</a>
-
-</li>
-<li><a href="Basics.html#lab41">Proof by Case Analysis</a>
+<li><a href="Basics.html#lab24">数据与函数</a>
 <div>
 <ul class="doclist">
-<li><a href="Basics.html#lab44">More on Notation (Optional)</a>
+<li><a href="Basics.html#lab25">枚举类型</a>
 
 </li>
-<li><a href="Basics.html#lab45">Fixpoints and Structural Recursion (Optional)</a>
+<li><a href="Basics.html#lab26">一周七日</a>
+
+</li>
+<li><a href="Basics.html#lab27">布尔值</a>
+
+</li>
+<li><a href="Basics.html#lab30">类型</a>
+
+</li>
+<li><a href="Basics.html#lab31">从旧类型构造新类型</a>
+
+</li>
+<li><a href="Basics.html#lab32">模块</a>
+
+</li>
+<li><a href="Basics.html#lab33">元组</a>
+
+</li>
+<li><a href="Basics.html#lab34">自然数</a>
 
 </li>
 </ul>
 </div>
 
 </li>
-<li><a href="Basics.html#lab47">More Exercises</a>
+<li><a href="Basics.html#lab37">基于化简的证明</a>
+
+</li>
+<li><a href="Basics.html#lab38">基于改写的证明</a>
+
+</li>
+<li><a href="Basics.html#lab41">利用情况分析来证明</a>
+
+</li>
+<li><a href="Basics.html#lab44">关于记法的更多内容 (可选)</a>
+
+</li>
+<li><a href="Basics.html#lab45">不动点 <span class="inlinecode"><span class="id" title="keyword">Fixpoint</span></span> 和结构化递归 (可选)</a>
+
+</li>
+<li><a href="Basics.html#lab47">更多练习</a>
 <div>
 <ul class="doclist">
-<li><a href="Basics.html#lab48">Warmups</a>
+<li><a href="Basics.html#lab48">热身</a>
 
 </li>
-<li><a href="Basics.html#lab52">Course Late Policies, Formalized</a>
+<li><a href="Basics.html#lab52">课程迟交政策，形式化</a>
 
 </li>
-<li><a href="Basics.html#lab60">Binary Numerals</a>
+<li><a href="Basics.html#lab60">二进制数</a>
 
 </li>
 </ul>
 </div>
 
 </li>
-<li><a href="Basics.html#lab62">Optional: Testing Your Solutions</a>
+<li><a href="Basics.html#lab62">可选：测试你的解答</a>
 
 </li>
 </ul>
 </div>
-<h2><a href="Induction.html">Proof by Induction &nbsp;&nbsp; (<i>Induction</i>)</a></h2>
+<h2><a href="Induction.html">归纳证明 &nbsp;&nbsp; (<i>Induction</i>)</a></h2>
 <div>
 <ul class="doclist">
-<li><a href="Induction.html#lab63">Separate Compilation</a>
+<li><a href="Induction.html#lab63">单独编译</a>
 
 </li>
-<li><a href="Induction.html#lab64">Proof by Induction</a>
+<li><a href="Induction.html#lab64">归纳证明</a>
 
 </li>
-<li><a href="Induction.html#lab69">Proofs Within Proofs</a>
+<li><a href="Induction.html#lab69">证明里的证明</a>
 
 </li>
-<li><a href="Induction.html#lab70">Formal vs. Informal Proof</a>
+<li><a href="Induction.html#lab70">形式化证明 vs. 非形式化证明</a>
 
 </li>
-<li><a href="Induction.html#lab73">More Exercises</a>
+<li><a href="Induction.html#lab73">更多练习</a>
 
 </li>
-<li><a href="Induction.html#lab76">Nat to Bin and Back to Nat</a>
+<li><a href="Induction.html#lab76">从 Nat 到 Bin 再到 Nat</a>
 
 </li>
-<li><a href="Induction.html#lab79">Bin to Nat and Back to Bin (Advanced)</a>
+<li><a href="Induction.html#lab79">从二进制到自然数再回到二进制（进阶）</a>
 
 </li>
 </ul>
 </div>
-<h2><a href="Lists.html">Working with Structured Data &nbsp;&nbsp; (<i>Lists</i>)</a></h2>
+<h2><a href="Lists.html">使用结构化的数据 &nbsp;&nbsp; (<i>Lists</i>)</a></h2>
 <div>
 <ul class="doclist">
-<li><a href="Lists.html#lab82">Pairs of Numbers</a>
+<li><a href="Lists.html#lab82">数值序对</a>
 
 </li>
 <li><a href="Lists.html#lab85">Lists of Numbers</a>

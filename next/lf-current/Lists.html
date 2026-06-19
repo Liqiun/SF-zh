@@ -4,11 +4,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="common/css/sf.css" rel="stylesheet" type="text/css" />
-<title>Lists: Working with Structured Data</title>
+<title>Lists: 使用结构化的数据</title>
 <link href="common/jquery-ui/jquery-ui.css" rel="stylesheet">
 <script src="common/jquery-ui/external/jquery/jquery.js"></script>
 <script src="common/jquery-ui/jquery-ui.js"></script>
 <script src="common/toggleproofs.js"></script>
+<script src="common/term.js" defer></script>
+<link href="common/css/term.css" rel="stylesheet" type="text/css"/>
 <link href="common/css/lf.css" rel="stylesheet" type="text/css"/>
 </head>
 
@@ -19,17 +21,17 @@
 <div id="header">
 <div id='logoinheader'><a href='https://softwarefoundations.cis.upenn.edu'>
 <img src='common/media/image/sf_logo_sm.png' alt='Software Foundations Logo'></a></div>
-<div class='booktitleinheader'><a href='index.html'>Volume 1: Logical Foundations</a></div>
+<div class='booktitleinheader'><a href='index.html'>Volume 1: 逻辑基础</a></div>
 <ul id='menu'>
-   <li class='section_name'><a href='toc.html'>Table of Contents</a></li>
-   <li class='section_name'><a href='coqindex.html'>Index</a></li>
-   <li class='section_name'><a href='deps.html'>Roadmap</a></li>
+   <li class='section_name'><a href='toc.html'>目录</a></li>
+   <li class='section_name'><a href='coqindex.html'>索引</a></li>
+   <li class='section_name'><a href='deps.html'>路线</a></li>
 </ul>
 </div>
 
 <div id="main">
 
-<h1 class="libtitle">Lists<span class="subtitle">Working with Structured Data</span></h1>
+<h1 class="libtitle">Lists<span class="subtitle">使用结构化的数据</span></h1>
 
 
 <div class="code">
@@ -39,13 +41,13 @@
 </div>
 
 <div class="doc">
-<a id="lab82"></a><h1 class="section">Pairs of Numbers</h1>
+<a id="lab82"></a><h1 class="section">数值序对</h1>
 
 <div class="paragraph"> </div>
 
- In an <span class="inlinecode"><span class="id" title="keyword">Inductive</span></span> type definition, each constructor can take
-    any number of arguments -- none (as with <span class="inlinecode"><span class="id" title="var">true</span></span> and <span class="inlinecode"><span class="id" title="var">O</span></span>), one (as
-    with <span class="inlinecode"><span class="id" title="var">S</span></span>), or more than one (as with <span class="inlinecode"><span class="id" title="var">nybble</span></span> and the following): 
+ 在 <span class="inlinecode"><span class="id" title="keyword">Inductive</span></span> 类型定义中，每个【构造子|Constructor】可以有任意多个参数
+    ——可以没有（如 <span class="inlinecode"><span class="id" title="var">true</span></span> 和 <span class="inlinecode"><span class="id" title="var">O</span></span>），可以只有一个（如 <span class="inlinecode"><span class="id" title="var">S</span></span>），也可以超过一个
+    （如 <span class="inlinecode"><span class="id" title="var">nybble</span></span>，以及下文所示）： 
 </div>
 <div class="code">
 
@@ -54,9 +56,8 @@
 </div>
 
 <div class="doc">
-This declaration can be read: "The one and only way to
-    construct a pair of numbers is by applying the constructor <span class="inlinecode"><span class="id" title="var">pair</span></span>
-    to two arguments of type <span class="inlinecode"><span class="id" title="var">nat</span></span>." 
+此声明可以读作：「构造数值序对的唯一一种方法，就是将构造子 <span class="inlinecode"><span class="id" title="var">pair</span></span>
+    应用到两个 <span class="inlinecode"><span class="id" title="var">nat</span></span> 类型的参数上。」 
 </div>
 <div class="code">
 
@@ -64,8 +65,7 @@ This declaration can be read: "The one and only way to
 </div>
 
 <div class="doc">
-Functions for extracting the first and second components of a pair
-    can then be defined by pattern matching. 
+以下函数可提取序对中第一个和第二个分量，通过模式匹配来定义。 
 </div>
 <div class="code">
 
@@ -82,10 +82,8 @@ Functions for extracting the first and second components of a pair
 </div>
 
 <div class="doc">
-Since pairs will be used heavily in what follows, it will be
-    convenient to write them with the standard mathematical notation
-    <span class="inlinecode">(<span class="id" title="var">x</span>,<span class="id" title="var">y</span>)</span> instead of <span class="inlinecode"><span class="id" title="var">pair</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">y</span></span>.  We can tell Rocq to allow this with
-    a <span class="inlinecode"><span class="id" title="keyword">Notation</span></span> declaration. 
+由于序对十分常用，不妨以标准的数学记法 <span class="inlinecode">(<span class="id" title="var">x</span>,<span class="id" title="var">y</span>)</span> 取代 <span class="inlinecode"><span class="id" title="var">pair</span></span> <span class="inlinecode"><span class="id" title="var">x</span></span> <span class="inlinecode"><span class="id" title="var">y</span></span>。
+    通过 <span class="inlinecode"><span class="id" title="keyword">Notation</span></span> 向 Coq 声明该记法： 
 </div>
 <div class="code">
 
@@ -93,8 +91,7 @@ Since pairs will be used heavily in what follows, it will be
 </div>
 
 <div class="doc">
-The new notation can be used both in expressions and in pattern
-    matches. 
+新的记法在表达式和模式匹配中都可以使用。 
 </div>
 <div class="code">
 
@@ -1611,7 +1608,7 @@ Last, the <span class="inlinecode"><span class="id" title="var">find</span></spa
 
 <div class="code">
 <span class="id" title="keyword">End</span> <a class="idref" href="Lists.html#PartialMap"><span class="id" title="module">PartialMap</span></a>.<br/><hr class='doublespaceincode'/>
-<span class="comment">(*&nbsp;2026-06-19&nbsp;17:45&nbsp;*)</span><br/>
+<span class="comment">(*&nbsp;2026-06-19&nbsp;18:13&nbsp;*)</span><br/>
 </div>
 </div>
 

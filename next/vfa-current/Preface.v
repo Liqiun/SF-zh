@@ -145,7 +145,7 @@
     @book            {Appel:SF3,
     author       =   {Andrew W. Appel},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Verified Functional Algorithms",
+    title        =   "函数式算法验证",
     series       =   "Software Foundations",
     volume       =   "3",
     year         =   "2026",
@@ -162,4 +162,4 @@
     NSF Expeditions grant 1521523, _The Science of Deep
     Specification_. *)
 
-(* 2026-06-19 17:50 *)
+(* 2026-06-19 18:18 *)

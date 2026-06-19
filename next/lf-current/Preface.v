@@ -1,405 +1,296 @@
 (** * Preface *)
 
 (* ################################################################# *)
-(** * Welcome *)
+(** * 欢迎 *)
 
-(** This is the entry point to a series of electronic textbooks on
-    various aspects of _Software Foundations_, the mathematical
-    underpinnings of reliable software.  Topics in the series include
-    basic concepts of logic, computer-assisted theorem proving, the
-    Rocq prover, functional programming, operational semantics, logics
-    and techniques for reasoning about programs, static type systems,
-    property-based random testing, and verification of practical C
-    code.  The exposition is intended for a broad range of readers,
-    from advanced undergraduates to PhD students and researchers.  No
-    specific background in logic or programming languages is assumed,
-    though a degree of mathematical maturity will be helpful.
+(** 这里是【《软件基础》】系列书籍的起点，本书阐明了可靠软件背后的数学根基。
+    书中的主题包括基本的逻辑概念、计算机辅助定理证明、Rocq 证明助理、
+    函数式编程、操作语义、用于论证软件的逻辑和技术、静态类型系统、
+    基于性质的随机测试、以及对实践中 C 代码的验证。
+    本书可供高年级本科生、研究生、科研工作者及同等学力的广大读者学习参考。
+    阅读本书无需具备逻辑学、程序语言等背景知识，但一定的数学基础有助于理解书中内容。
 
-    The principal novelty of the series is that it is one hundred
-    percent formalized and machine-checked: each text is literally a
-    script for Rocq.  The books are intended to be read alongside (or
-    inside) an interactive session with Rocq.  All the details in the
-    text are fully formalized in Rocq, and most of the exercises are
-    designed to be worked using Rocq.
+    本书最大的创新之处在于，书中全文均已形式化并由机器检验。换言之，本书内容即为
+    Rocq 脚本，可在 Rocq 的交互界面下阅读。书中大部分习题也在 Rocq 中完成。
 
-    The files in each book are organized into a sequence of core
-    chapters, covering about one semester's worth of material and
-    organized into a coherent linear narrative, plus a number of
-    "offshoot" chapters covering additional topics.  All the core
-    chapters are suitable for both upper-level undergraduate and
-    graduate students.
+    本书中的文件都经过了精心组织：核心章节作为主线贯穿始终，涵盖了一学期的内容；
+    「支线」中则包含附加的主题。所有核心章节都适合高年级本科生和研究生学习。
 
-    This book, _Logical Foundations_, lays groundwork for the others,
-    introducing the reader to the basic ideas of functional
-    programming, constructive logic, and the Rocq prover. *)
+    本书为第一卷【《逻辑基础》】，它向读者介绍了函数式编程的基本概念、构造逻辑以及
+    Rocq 证明助理，为其余诸卷的学习奠定了基础。 *)
 
 (* ################################################################# *)
-(** * Overview *)
+(** * 概览 *)
 
-(** Building reliable software is hard -- really hard.  The scale and
-    complexity of modern systems, the number of people involved, and
-    the range of demands placed on them make it challenging to build
-    software that is even more-or-less correct, much less 100%%
-    correct.  At the same time, the increasing degree to which
-    information processing is woven into every aspect of society
-    greatly amplifies the cost of bugs and insecurities.
+(** 构建可靠的软件非常，非常地困难。现代系统的规模、复杂度、参与构建过程的人数，
+    还有置于系统之上的需求范围，让构建或多或少地正确的软件变得极为困难，
+    更不用说百分之百地正确了。同时，由于信息处理技术继续渗透到社会的各个层面，
+    人们为程序错误和漏洞付出的代价变得越来越高昂。
 
-    Computer scientists and software engineers have responded to these
-    challenges by developing a host of techniques for improving
-    software reliability, ranging from recommendations about managing
-    software projects teams (e.g., extreme programming) to design
-    philosophies for libraries (e.g., model-view-controller,
-    publish-subscribe, etc.) and programming languages (e.g.,
-    object-oriented programming, functional programming, ...)
-    to mathematical techniques for
-    specifying and reasoning about properties of software and tools
-    for helping validate these properties.  The _Software Foundations_
-    series is focused on this last set of tools.
+    为了应对这些挑战，计算机科学家和软件工程师们发展了一套完整的提升软件质量的方法，
+    从为管理软件项目的团队提供建议（如【极限编程|Extreme Programming】），
+    到库的设计原理（如【模型-视图-控制器|Model-View-Controller】、
+    【发布-订阅模式|Publish-Subscribe】以及编程语言的设计哲学（【面向对象编程|Object Oriented Programming】、【面向剖面编程|Aspect Oriented Programming】、
+    【函数式编程|Functional Programming】），
+    还有用于阐明和论证软件性质的数学技术，以及验证这些性质的工具。
+    【《软件基础》】系列着重于最后一种方法。
 
-    This volume weaves together three conceptual threads:
+    本书将以下三种概念穿插在一起：
 
-    (A) basic tools from _logic_ for making and justifying precise
-        claims about programs;
+    （1）【逻辑学|Logic】中的基本工具，用于准确地提出并论证关于程序的假设；
 
-    (B) the use of _proof assistants_ (or _provers_) to construct
-        rigorous logical arguments;
+    （2）【证明助理|Proof Assistant】用于构造严谨的逻辑论据；
 
-    (C) _functional programming_, both as a method of programming that
-        simplifies reasoning about programs and as a bridge between
-        programming and logic. *)
+    （3）【函数式编程|Functional Programming】思想，同时作为一种编程方法来简化程序的论证，
+         以及架起程序和逻辑学之间的桥梁。 *)
 
 (* ================================================================= *)
-(** ** Logic *)
+(** ** 逻辑学 *)
 
-(** Logic is the field of study whose subject matter is _proofs_ --
-    unassailable arguments for the truth of particular propositions.
-    Volumes have been written about the central role of logic in
-    computer science.  Manna and Waldinger called it "the calculus of
-    computer science," while Halpern et al.'s paper _On the Unusual
-    Effectiveness of Logic in Computer Science_ catalogs scores of
-    ways in which logic offers critical tools and insights.  Indeed,
-    they observe that, "As a matter of fact, logic has turned out to
-    be significantly more effective in computer science than it has
-    been in mathematics.  This is quite remarkable, especially since
-    much of the impetus for the development of logic during the past
-    one hundred years came from mathematics."
+(** 逻辑学是研究*证明*的领域，即对特定命题的真伪性进行不容置疑的论证。
+    有关逻辑学在计算机科学中核心作用的书卷汗牛充栋。Manna 和 Waldinger
+    称之为「计算机科学的微积分」，而 Halpern 的论文
+    _On the Unusual Effectiveness of Logic in Computer Science_
+    中则收录了大量逻辑学为计算机科学提供的洞察力和至关重要的工具。
+    的确，他们发现：“实际上，逻辑学对计算机科学来说远比在数学中更加有效。
+    这相当引人注目，特别是过去一百年来，逻辑学发展的动力大都来自于数学。”
 
-    In particular, the fundamental tools of _inductive proof_ are
-    ubiquitous in all of computer science.  You have surely seen them
-    before, perhaps in a course on discrete math or analysis of
-    algorithms, but in this course we will examine them more deeply
-    than you have probably done so far. *)
+    具体来说，【归纳证明|Inductive Proof】的基本概念在计算机科学中无处不在。
+    你以前肯定见过它们，比如说在离散数学或算法分析中。不过在本课程中，
+    我们会在你未曾涉及的深度下对它进行探讨。 *)
 
 (* ================================================================= *)
-(** ** Proof Assistants *)
+(** ** 证明助理 *)
 
-(** The flow of ideas between logic and computer science has not been
-    unidirectional: CS has also made important contributions to logic.
-    One of these has been the development of software tools for
-    helping construct proofs of logical propositions.  These tools
-    fall into two broad categories:
+(** 逻辑学和计算机科学之间的思想交流并不是单向的，
+    计算机科学也为逻辑学做出了重要的贡献，
+    其中之一就是发展了帮助逻辑命题构造证明的软件工具。
+    这些工具分为两大类：
 
-       - _Automated theorem provers_ provide "push-button" operation:
-         you give them a proposition and they return either _true_ or
-         _false_ (or, sometimes, _don't know: ran out of time_).
-         Although their reasoning capabilities are still limited,
-         they have matured tremendously in recent decades and
-         are used now in a multitude of settings.  Examples of such
-         tools include SAT solvers, SMT solvers, and model checkers.
+       - 【自动定理证明器|Automatic Theorem Prover】
+         提供了一键式操作：它们接受一个命题，
+         然后返回_'真'_或_'假'_（有时为_'未知：超时'_ ）。
+         尽管它们的能力仅限于特定种类的推理，然而在近几年却快速成熟，
+         并应用到了多种场景中。此类工具包括 SAT 求解器，
+         SMT 求解器以及【模型检查器|Model Checker】。
 
-       - _Proof assistants_ are hybrid tools that automate the more
-         routine aspects of building proofs while depending on human
-         guidance for more difficult aspects.  Widely used proof
-         assistants include Isabelle, Agda, Twelf, ACL2, PVS, F*,
-         HOL4, Lean, and Rocq, among many others.
+       - 【证明助理|Proof Assistant】 是一种混合式工具，
+         它能将证明的构建中比较常规的部分自动化，
+         而更加困难的部分则依赖人类来解决。广泛使用的证明助理包括
+         Isabelle、Agda、Twelf、ACL2、PVS 以及 Rocq 等等。
 
-    This course is based around Rocq, a proof assistant that has been
-    under development since 1983 and has attracted a large community
-    of users in both research and industry.  Rocq provides a rich
-    environment for interactive development of machine-checked formal
-    reasoning.  The kernel of the Rocq system is a simple
-    proof-checker, which guarantees that only correct deduction steps
-    are ever performed.  On top of this kernel, the Rocq environment
-    provides high-level facilities for proof development, including a
-    large library of common definitions and lemmas, powerful tactics
-    for constructing complex proofs semi-automatically, and a
-    special-purpose programming language for defining new
-    proof-automation tactics for specific situations.
+    本课程围绕 Rocq 展开，它是个自 1983 年以来主要在法国开发的证明助理，
+    近年来吸引了大量来自研究机构和业界的社区用户。
+    Rocq 为机器验证的形式化论证的交互式开发提供了丰富的环境。Rocq
+    系统的内核是一个简单的证明检查器，它保证只会执行正确的推理步骤。
+    在此内核之上，Rocq 环境提供了高级的证明开发功能，包括一个庞大的库，
+    其中包含各种定义和引理；强大策略，用于半自动化构造证明；
+    还有一个专用的编程语言，能够为特殊情况定义新的自动证明策略。
 
-    Rocq has been a critical enabler for a huge variety of work across
-    computer science and mathematics:
+    Rocq 已成为跨计算机科学和数学研究的关键推动者：
 
-    - As a _platform for modeling programming languages_, it has
-      become a standard tool for researchers who need to describe and
-      reason about complex language definitions.  It has been used,
-      for example, to check the security of the JavaCard platform,
-      obtaining the highest level of common criteria certification,
-      and for formal specifications of the x86 and LLVM instruction
-      sets and programming languages such as C.
+    - 作为一个_'编程语言的建模平台'_，
+      Rocq 成为了研究员对复杂的语言定义进行描述和论证的标准工具。
+      例如，它被用来检查 JavaCard 平台的安全性，得到了最高等级的通用准则验证，
+      它还被用在 x86 和 LLVM 指令集以及 C 等编程语言的形式化规范中。
 
-    - As an _environment for developing formally certified software
-      and hardware_, Rocq has been used, for example, to build
-      CompCert, a fully-verified optimizing compiler for C, and
-      CertiKOS, a fully verified hypervisor, for proving the
-      correctness of subtle algorithms involving floating point
-      numbers, and as the basis for CertiCrypt, FCF, and SSProve,
-      which are frameworks for proving cryptographic algorithms secure.
-      It is also being used to build verified implementations of the
-      open-source RISC-V processor architecture.
+    - 作为一个_'形式化软件验证的开发环境'_，Rocq 被用来构建：
+      CompCert，一个完全验证的 C 优化编译器；
+      CertiKos，一个完全验证的工具，用于证明涉及浮点数的精妙算法的正确性；
+      Rocq 也是 CertiCrypt 的基础，一个用于论证密码学算法安全性的环境。
+      Rocq 还被用来构建开源 RISC-V 处理器架构的验证实现。
 
-    - As a _realistic environment for functional programming with
-      dependent types_, it has inspired numerous innovations.  For
-      example, Hoare Type Theory embeds reasoning about
-      "pre-conditions" and "post-conditions" (an extension of the
-      _Hoare Logic_ we will see later in this course) in Rocq.
+    - 作为一个_'依值类型函数式编程的现实环境'_，Rocq 激发了大量的创新。
+      例如 Ynot 系统嵌入了「关系式霍尔推理」（一个 _'霍尔逻辑'_ 的扩展，
+      我们之后会看到它）。
 
-    - As a _proof assistant for higher-order logic_, it has been used
-      to validate a number of important results in mathematics.  For
-      example, its ability to include complex computations inside
-      proofs made it possible to develop the first formally verified
-      proof of the 4-color theorem.  This proof had previously been
-      controversial among mathematicians because it required checking
-      a large number of configurations using a program. In the Rocq
-      formalization, everything is checked, including the correctness
-      of the computational part.  More recently, an even more massive
-      effort led to a Rocq formalization of the Feit-Thompson Theorem,
-      the first major step in the classification of finite simple
-      groups.  *)
+    - 作为一个_'高阶逻辑的证明助理'_，Rocq 被用来验证数学中一些重要的结果。
+      例如 Rocq 可在证明中包含复杂计算的能力，使其开发出了第一个形式化验证的四色定理证明。
+      此前数学家们对该证明颇有争议，因为它需要用程序对大量组态进行检验。
+      在 Rocq 的形式化中，所有东西都被检验过，自然也包括计算的正确性。
+      近年来，Feit-Thompson 定理经过了更大的努力用 Rocq 形式化了，
+      它是对有限单群进行分类的十分重要的第一步。  *)
 
 (* ================================================================= *)
-(** ** Functional Programming *)
+(** ** 函数式编程 *)
 
-(** The term _functional programming_ refers both to a collection of
-    programming idioms that can be used in almost any programming
-    language and to a family of programming languages designed to
-    emphasize these idioms, including Haskell, OCaml, Standard ML,
-    F##, Scala, Scheme, Racket, Common Lisp, Clojure, Erlang, F*,
-    and Rocq.
+(** 【函数式编程|Functional Programming】不仅表示可以在几乎任何编程语言中使用的各种【习语|Idiom】，
+    还代表着一族以这些习语为侧重点设计的编程语言，包括
+    Haskell、OCaml、Standard ML、F##、Scala、Scheme、Racket、Common Lisp、Erlang
+    还有 Rocq。
 
-    Functional programming has been developed over many decades --
-    indeed, its roots go back to Church's lambda-calculus, which was
-    invented in the 1930s, well _before_ the first electronic
-    computers!  But since the early '90s it has enjoyed a surge of
-    interest among industrial engineers and language designers,
-    playing a key role in high-value systems at companies like Jane
-    Street Capital, Microsoft, Facebook, Twitter, and Ericsson.
+    函数式编程已经有数十年的历史了--实际上，它甚至可以追溯到 1930
+    年代 Church 发明的 λ-演算，那时还没有电子计算机呢！自 90 年代初以来，
+    函数式编程激起了业内软件工程师和语言设计者浓厚的兴趣，它们还在
+    Jane Street Capital、Microsoft、Facebook、Twitter 和 Ericsson
+    等公司的高价值系统中发挥着关键的作用。
 
-    The most basic tenet of functional programming is that, as much as
-    possible, computation should be _pure_, in the sense that the only
-    effect of execution should be to produce a result: it should be
-    free from _side effects_ such as I/O, assignments to mutable
-    variables, redirecting pointers, etc.  For example, whereas an
-    _imperative_ sorting function might take a list of numbers and
-    rearrange its pointers to put the list in order, a pure sorting
-    function would take the original list and return a _new_ list
-    containing the same numbers in sorted order.
+    函数式编程最根本的原则是，计算应当尽可能地【纯粹|Pure】，也就是说，
+    执行代码的唯一作用应当是只产生一个结果。计算应当没有【副作用|Side Effect】，
+    即它与输入/输出、可变量的赋值、指针重定向等相分离。例如，
+    【指令式|Imperative】的排序函数会接受一个数字列表，通过重组指针使列表得以排序；
+    而一个纯粹的排序函数则会接受一个列表，返回一个含有同样数字，
+    但是已经排好序的新列表。
 
-    A significant benefit of this style of programming is that it
-    makes programs easier to understand and reason about.  If every
-    operation on a data structure yields a new data structure, leaving
-    the old one intact, then there is no need to worry about how that
-    structure is being shared and whether a change by one part of the
-    program might break an invariant relied on by another part of the
-    program.  These considerations are particularly critical in
-    concurrent systems, where every piece of mutable state that is
-    shared between threads is a potential source of pernicious bugs.
-    Indeed, a large part of the recent interest in functional
-    programming in industry is due to its simpler behavior in the
-    presence of concurrency.
+    这种编程风格最明显的好处之一，就是它能让程序变得更容易理解和论证。
+    如果对某个数据结构的所有操作都会返回新的数据结构，而旧有的结构没有变动，
+    那么我们便无需担心它的共享方式，因为程序中一部分的改变并不会破坏另一部分的属性。
+    在并发程序中，线程间共享的每一个可变状态都是致命 Bug 的潜在来源，
+    因此这方面的考虑尤为关键。事实上，业界最近对函数式编程的兴趣大部分来源于此，
+    即它在并发中表现出的简单行为。
 
-    Another reason for the current excitement about functional
-    programming is related to the first: functional programs are often
-    much easier to parallelize and physically distribute than their
-    imperative counterparts.  If running a computation has no effect
-    other than producing a result, then it does not matter _where_ it
-    is run.  Similarly, if a data structure is never modified
-    destructively, then it can be copied freely, across cores or
-    across the network.  Indeed, the "Map-Reduce" idiom, which lies at
-    the heart of massively distributed query processors like Hadoop
-    and is used by Google to index the entire web is a classic example
-    of functional programming.
+    人们对函数式编程感到兴奋的另一原因与前文所述的原因相关：
+    函数式程序通常比指令式程序更容易并行化和物理层面的分布式化。
+    如果一个计算除了产生结果之外没有其它的作用，那么它在【何时|When】
+    执行便不再重要。同样，如果一个数据结构不会被破坏性地修改，
+    那么它可以跨核心或网络地被随意复制。其实，「【映射-归约|Map-Reduce】」
+    的习语就是函数式编程的经典例子，它在大规模分布式查询处理器（如 Hadoop）
+    中处于核心地位，并被 Google 用来索引整个互联网。
 
-    For purposes of this course, functional programming has yet
-    another significant attraction: it serves as a bridge between
-    logic and computer science.  Indeed, Rocq itself can be viewed as a
-    combination of a small but extremely expressive functional
-    programming language plus a set of tools for stating and proving
-    logical assertions.  Moreover, when we come to look more closely,
-    we find that these two sides of Rocq are actually aspects of the
-    very same underlying machinery -- i.e., _proofs are programs_.  *)
+    对本课程而言，函数式编程还有另一个重要的吸引力：
+    它在逻辑和计算机科学之间架起了一座桥梁。事实上，Rocq
+    本身即可视作一个小巧却有着极强表达能力的函数式编程语言，
+    以及一组用于陈述和证明逻辑断言的工具的结合体。进而言之，
+    当我们更加深入地审视它时，会发现 Rocq 的这两方面其实基于完全相同的底层机制 --
+    【证明即程序|Proofs are Programs】，可谓殊途同归。 *)
 
 (* ================================================================= *)
 (** ** Rocq vs. Coq *)
 
-(** Until 2025, the Rocq prover was known as Coq. According to the
-    official webpage, "The name 'Coq' referenced the Calculus of
-    Constructions (CoC), the foundational system it is based on, as
-    well as one of its creators, Thierry Coquand. Additionally, it
-    paid homage to the French national symbol, the rooster.  The new
-    name, 'the Rocq Prover', honors Inria Rocquencourt, the original
-    site where the prover was developed. It also alludes to the
-    mythological bird Roc (or Rokh), symbolizing strength and not so
-    disconnected to a rooster. Furthermore, the name conveys a sense
-    of solidity, and its unintended connection to music adds a
-    pleasant resonance."
+(** 在 2025 年之前，Rocq 证明器被称为 Coq。根据官方网页的说法，
+「『Coq』这个名字源于构造演算（CoC），它是 Rocq 证明器的基础系统，
+以及它的创建者之一 Thierry Coquand。此外，它还致敬了法国的国鸟——公鸡。
+新的名称『Rocq』是为了纪念 Inria Rocquencourt，该证明器的最初开发地。
+它也暗指神话中的巨鸟 Roc（或 Rokh），象征着力量，并且与公鸡有着某种联系。
+此外，这个名字传达了一种稳固感，它与音乐的意外联系也增添了一种悦耳的韵味。」
 
-    The current release of Software Foundations is still in a
-    transitional state, and you will see references to both Coq and
-    Rocq. *)
+当前版本的《软件基础》仍处于过渡阶段，您会同时看到对 Coq 和 Rocq 的引用。*)
 
 (* ================================================================= *)
-(** ** Further Reading *)
+(** ** 扩展阅读 *)
 
-(** This text is intended to be self contained, but readers looking
-    for a deeper treatment of particular topics will find some
-    suggestions for further reading in the [Postscript] chapter.
-    Bibliographic information for all cited works can be found in the
-    file [Bib].*)
+(** 本书旨在自成一体，不过想要对特定主题进行深入研究的读者，可以在
+    [Postscript] 一章中找到推荐的扩展阅读。所有引用的参考文献可在
+    [Bib] 文件中找到。 *)
 
 (* ################################################################# *)
-(** * Practicalities *)
+(** * 实践指南 *)
 
 (* ================================================================= *)
-(** ** System Requirements *)
+(** ** 系统要求 *)
 
-(** Rocq runs on Windows, Linux, and macOS.  The files in this book
-    have been tested with Rocq 9.0.0. *)
+(** Rocq 可以在 Windows、Linux 和 macOS 上运行。本书中的文件均已通过了
+    Rocq 9.0.0 的测试。 *)
 
 (* ----------------------------------------------------------------- *)
-(** *** Recommended Installation Method: VSCode + Docker *)
+(** *** 推荐的安装方法：VSCode + Docker *)
 
-(** The Visual Studio Code IDE can cooperate with the Docker
-    virtualization platform to compile Rocq scripts without the need
-    for any separate Rocq installation.  This method is recommended for
-    most Software Foundations readers.
+(** 我们推荐使用 Visual Studio Code 编辑器结合 Docker 虚拟化平台来编译 Rocq 脚本，
+    这样无需单独安装任何 Rocq 版本。此方法推荐大多数《软件基础》读者采用。
 
-    - Install Docker from {https://www.docker.com/get-started/} or
-      make sure your existing installation is up to date.
+    - 从 {https://www.docker.com/get-started/} 安装 Docker 或确认你的既有安装已更新至最新版本。
 
-    - Make sure Docker is running.
+    - 确保 Docker 正在运行。
 
-    - Install VSCode from {https://code.visualstudio.com} and start it
-      running.
+    - 从 {https://code.visualstudio.com} 安装 VSCode 并启动它。
+    - 从 {https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers}
+      安装 VSCode 的 Dev Containers 扩展。
 
-    - Install VSCode's Dev Containers Extension from
-      {https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers}
+      （请注意，这个扩展只能在官方版本的 VSCode 上使用，而不能在一些 VSCode 分叉版本如 VsCodium 上使用。）
 
-      (Note that this extension only works with the official version
-      of VSCode, not with some VSCode forks like VsCodium.)
+    - 从 {https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers}
+      安装 VSCode 的 Dev Containers 扩展。
 
-    - Set up a directory for this SF volume by downloading the
-      provided [.tgz] file.  Besides the [.v] file for each chapter,
-      this directory will contain a [.devcontainer] subdirectory with
-      instructions for VSCode about where to find an appropriate
-      Docker image and a [_CoqProject] file, whose presence triggers
-      the VSCoq extension.
+      （请注意，此扩展只适用于官方版本的 VSCode，无法在一些 VSCode 分支版本如 VsCodium 上使用。）
 
-    - In VSCode, use [File > Open Folder] to open the new directory.
-      VSCode should ask you whether you want to run the project in the
-      associated Docker container.  (If it does not ask you, you can
-      open the command palette by pressing F1 and run the command “Dev
-      Containers: Reopen in Container”.)
+    - 下载提供的 [.tgz] 文件，将本卷的 SF 解压到一个目录。
+      除了每个章节的 [.v] 文件外，此目录还将包含一个 [.devcontainer] 子目录，
+      其中包含关于 VSCode 如何找到适当 Docker 镜像和 [_CoqProject] 文件的说明，
+      后者的存在会触发 VSCoq 扩展。
 
-      This step may take some time.
+    - 在 VSCode 中，使用 [文件 > 打开文件夹] 打开新目录。
+      VSCode 应该询问你是否要在关联的 Docker 容器中运行项目。
+      （如果它没有询问你，你可以按下 F1 打开命令面板并运行命令 “Dev
+      Containers: Reopen in Container”。）
 
-    - Check that VSCoq is working by double-clicking the file
-      [Basics.v] from the list on the left (you should see a blinking
-      cursor in the window that opens; if not you can click in that
-      window to select it), and pressing [alt+downarrow] (on MacOS,
-      [control+option+downarrow]) a few times.  You should see the
-      cursor move through the file and the region above the cursor get
-      highlighted.
+      这一步可能需要一些时间。
 
-      - If VSCoq does not work and you receive an error indicating that
-        [vscoqtop] was not found, open a new terminal in the container
-        (you can do this by opening the command palette and running the
-        command “Terminal: Create New Terminal”) and run the command
-        [which vscoqtop]. This should print the path to the VSCoq
-        installation inside the container. Copy this path
-        and paste it into the “VSCoq: Path” textbox in the
-        VSCoq extension settings (accessible via the gear icon on
-        the VSCoq extension page in VSCode), then reload your window.
+    - 检查 VSCoq 是否正常工作，方法是双击左侧列表中的文件 [Basics.v]
+      （你应该在打开的窗口中看到一个闪烁的光标；如果没有，你可以点击该窗口
+      来选择它），并按下 [alt+downarrow]（在 MacOS 上，是 [control+option+downarrow]）
+      几次。你应该看到光标在文件中移动，并且光标上方的区域会被高亮显示。
 
-    - To see what other key bindings are available, press F1 and then
-      type [Coq:], or visit the VSCoq web pages:
-      {https://github.com/rocq-prover/vsrocq}.  *)
+      - 如果 VSCoq 不起作用，你会收到一个错误提示，指出 [vscoqtop] 未找到。
+        这时，你可以打开容器中的新终端（你可以通过打开命令面板并运行命令
+        “Terminal: Create New Terminal” 来实现），并运行命令 [which vscoqtop]。
+        这应该会打印出容器中 VSCoq 的安装路径。将这个路径复制并粘贴到
+        VSCoq 扩展设置中的 “VSCoq: Path” 文本框中（可通过在 VSCoq 扩展页面
+        上点击齿轮图标来访问），然后重新加载窗口。
+
+    - 要查看其他可用的按键绑定，请按下 F1 并输入 [Coq:]，或访问 VSCoq 的网页：
+      {https://github.com/rocq-prover/vsrocq}。 *)
 
 (* ================================================================= *)
-(** ** Alternative Installation Methods *)
+(** ** 另一种安装方法 *)
 
-(** If you prefer, there are several other ways to use Rocq. You will need:
+(** 如果您愿意，还可以用其他几种方法来使用 Rocq 。您需要：
 
-    - A current installation of Rocq, available from the Rocq home
-      page ({https://rocq-prover.org/install}).  The "Rocq Platform"
-      offers the easiest installation experience for most people,
-      especially on Windows.
+    - 安装当前版本的 Rocq，可从 Rocq 的主页（{https://rocq-prover.org/install}）获取，
+      「Rocq Platform」提供了对大多数人来说最方便的体验，
+      尤其是在 Windows 上。
 
-    - An IDE for interacting with Rocq.  There are several choices:
+    - 一个用于与 Rocq 交互的集成开发环境（IDE），目前有几种选择：
 
-        - _VsCoq_ is an extension for Visual Studio Code that offers a
-          simple interface via a familiar IDE.  This option is the
-          recommended default.
+        - _VsRocq_ 是一个 Visual Studio Code 扩展，它提供了一个简单的界面，
+          就像熟悉的 IDE 一样。 这个选项是推荐的默认选项。
 
-          VsCoq can be used as an ordinary IDE or it can be combined
-          with Docker (see below) for a lightweight installation
-          experience.
+          VsRocq 可以用作普通的 IDE，也可以与 Docker 结合使用（请参见下面），
+          以获得轻量级安装体验。
 
-        - _Proof General_ is an Emacs-based IDE.  It tends to be
-          preferred by users who are already comfortable with Emacs.
-          It requires a separate installation (google "Proof General",
-          but generally all you need to do is [M-x package-list-packages],
-          then select the [proof-general] package from the list and
-          hit the [i] key for install, then hit the [x] key for execute).
+        - _Proof General_ 是一个基于 Emacs 的 IDE。 它通常被用户偏好的 Emacs 用户采用。
+          它需要单独安装（Google 搜索「Proof General」，
+          但一般来说，你只需要执行以下操作：[M-x package-list-packages]，
+          然后从列表中选择 [proof-general] 包，按 [i] 键进行安装，然后按 [x] 键执行。）
 
-          There are only a few commands you need to know to use ProofGeneral
-          effectively. They are:
+          你只需要知道少数 ProofGeneral 命令就可以方便地使用它。 它们是：
 
-          - [C-c C-n]: send the next command to Rocq.
-          - [C-c C-u]: undo (retract) the most recently executed command.
-          - [C-c C-RET]: submit everything up to the current cursor location to
-            Rocq for processing.
-          - [C-c C-.]: move the cursor to the end of the last command which has
-            been processed by Rocq.
-          - [C-c .]: toggle "electric terminator mode". When this mode is
-            turned on, simply typing a period will send the current command to
-            Rocq (normally you have to type a period and then type [C-c C-n]).
+          - [C-c C-n]：将下一个命令发送到 Rocq。
+          - [C-c C-u]：撤销（撤回）最近执行的命令。
+          - [C-c C-RET]：将当前光标位置之前的所有内容提交给 Rocq 进行处理。
+          - [C-c C-.]：将光标移动到最后一个已处理的命令的末尾。
+          - [C-c .]：切换「自动终止符模式」。 当此模式打开时，
+            只需输入一个点号即可将当前命令发送到 Rocq（通常您必须输入一个点，
+            然后输入 [C-c C-n]）。
 
-          Adventurous users of Rocq within Emacs may want to check out
-          extensions such as [company-coq] and [control-lock].
+          喜欢在 Emacs 中使用 Rocq 的用户可能想了解诸如 [company-coq]
+          和 [control-lock] 之类的扩展。
 
-        - _RocqIDE_ is a simpler stand-alone IDE.  It is distributed with
-          the Rocq Platform, so it should be available once you have Rocq
-          installed.  It can also be compiled from scratch, but on some
-          platforms this may involve installing additional packages for GUI
-          libraries and such.
+        - _RocqIDE_ 是一个简单的独立 IDE。它与 Rocq 平台一起分发，
+          因此安装后应该立即可用。它也可以从头开始编译，但在某些平台上，
+          这可能涉及安装额外的 GUI 库等软件包。
 
-          Users who like RocqIDE should consider running it with the
-          "asynchronous" and "error resilience" modes disabled:
+          喜欢 RocqIDE 的用户应当想考虑禁用以下两个模式：
+          「asynchronous」和「error resilience」：
 
           coqide -async-proofs off \
                  -async-proofs-command-error-resilience off Foo.v &
 *)
 
 (* ================================================================= *)
-(** ** Exercises *)
+(** ** 练习 *)
 
-(** Each chapter includes numerous exercises.  Each is marked with a
-    "star rating," which can be interpreted as follows:
+(** 每一章都包含大量的习题。每个习题都有标有「星级」，其含义是：
 
-       - One star: easy exercises that underscore points in the text
-         and that, for most readers, should take only a minute or two.
-         Get in the habit of working these as you reach them.
+       - 一星：很简单习题，强调课程的重点。对于大部分读者而言，
+         一两分钟应该足够了。养成看到一个做一个的习惯。
 
-       - Two stars: straightforward exercises (five or ten minutes).
+       - 二星：直截了当的习题（5 到 10 分钟）。
 
-       - Three stars: exercises requiring a bit of thought (ten
-         minutes to half an hour).
+       - 三星：需要一点思考的习题（10 分钟到半小时）。
 
-       - Four and five stars: more difficult exercises (half an hour
-         and up).
+       - 四或五星：更加困难的习题（半小时以上）。
 
-    Those using SF in a classroom setting should note that the autograder
-    assigns extra points to harder exercises:
+    在课堂上使用 SF 的教师应注意，自动评分器会给较难的练习题额外加分：
 
       1 star  = 1 point
       2 stars = 2 points
@@ -407,45 +298,40 @@
       4 stars = 6 points
       5 stars = 10 points
 
-    Some exercises are marked "advanced," and some are marked
-    "optional."  Doing just the non-optional, non-advanced exercises
-    should provide good coverage of the core material.  Optional
-    exercises provide a bit of extra practice with key concepts and
-    introduce secondary themes that may be of interest to some
-    readers.  Advanced exercises are for readers who want an extra
-    challenge and a deeper cut at the material.
+    有些习题标注为「进阶」，有些习题标注为「可选」。
+    只做非进阶、非可选的习题已经能将核心概念掌握得很不错了。
+    可选习题会对一些关键概念提供额外的练习，还有一些读者可能会感兴趣的次级主题。
+    进阶练习则留给想要更多挑战和更深理解的读者。
 
-    _Please do not post solutions to the exercises in a public place_.
-    Software Foundations is widely used both for self-study and for
-    university courses.  Having solutions easily available makes it
-    much less useful for courses, which typically have graded homework
-    assignments.  We especially request that readers not post
-    solutions to the exercises anyplace where they can be found by
-    search engines. *)
+     【请勿公布习题解答！】
+
+    《软件基础》已被广泛地用作自学教程和大学课程。如果习题解答很容易获得，
+    那么本书的效用将大打折扣，对于会为作业评分的大学课程来说尤其如此。
+    我们特别请求读者，切勿将习题答案放在任何能够被搜索引擎找到的地方。 *)
 
 (* ================================================================= *)
-(** ** Downloading the Rocq Files *)
+(** ** 下载 Rocq 文件 *)
 
-(** A tar file containing the full sources for the "release version"
-    of this book (as a collection of Rocq scripts and HTML files) is
-    available at {https://softwarefoundations.cis.upenn.edu}.
+(** 本书的「英文发布版」以及所有源代码的压缩包
+    （其中包含一组 Rocq 脚本和 HTML 文件）可访问
+    {https://softwarefoundations.cis.upenn.edu} 获取。
 
-    If you are using the book as part of a class, your professor may
-    give you access to a locally modified version of the files; you
-    should use that one instead of the public release version, so that
-    you get any local updates during the semester. *)
+    本书的中文版和压缩包可访问 {https://github.com/Rocq-zh/SF-zh} 获取。
 
-(* ================================================================= *)
-(** ** Chapter Dependencies *)
-
-(** A diagram of the dependencies between chapters and some suggested
-    paths through the material can be found in the file [deps.html]. *)
+    如果你是在一门课程中使用本书的，那么你的教授可能会让你使用本地的修改版，
+    此时你应当使用它们而非发布版，这样你可以获得所有该学期的本地更新。 *)
 
 (* ================================================================= *)
-(** ** Recommended Citation Format *)
+(** ** 章节依赖 *)
 
-(** If you want to refer to this volume in your own writing, please
-    do so as follows:
+(** 章节之间的依赖关系图以及建议的学习路线可以在文件
+    [deps.html]
+    中查看。 *)
+
+(* ================================================================= *)
+(** ** 推荐的引用格式 *)
+
+(**  如果你想在自己的作品中引用本书，请采用以下格式：
 
     @book            {Pierce:SF1,
     author       =   {Benjamin C. Pierce and
@@ -457,7 +343,7 @@
 		      Vilhelm Sjöberg and
 		      Brent Yorgey},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Logical Foundations",
+    title        =   "逻辑基础",
     series       =   "Software Foundations",
     volume       =   "1",
     year         =   "2026",
@@ -467,42 +353,32 @@
 *)
 
 (* ################################################################# *)
-(** * Resources *)
+(** * 资源 *)
 
 (* ================================================================= *)
-(** ** Sample Exams *)
+(** ** 模拟题 *)
 
-(** A large compendium of exams from many offerings of
-    CIS5000 ("Software Foundations") at the University of Pennsylvania
-    can be found at
-    {https://www.seas.upenn.edu/~cis5000/current/exams/index.html}.
-    There has been some drift of notations over the years, but most of
-    the problems are still relevant to the current text. *)
+(** 宾夕法尼亚大学的 CIS500（软件基础）课程提供了大量的考试大纲，可访问
+    {https://www.seas.upenn.edu/~cis500/current/exams/index.html} 获取。
+    近年来书中的记法有所变动，但大部分问题仍与本文对应。 *)
 
 (* ================================================================= *)
-(** ** Lecture Videos *)
+(** ** 课程视频 *)
 
-(** Lectures for two intensive summer courses based on _Logical
-    Foundations_ (part of the DeepSpec summer school series) can be
-    found at {https://deepspec.org/event/dsss17} and
-    {https://deepspec.org/event/dsss18/}.  The video quality in the
-    2017 lectures is poor at the beginning but gets better in the
-    later lectures. *)
+(** 【《逻辑基础》】夏季加强班（DeepSpec 夏季班系列之一）的课程讲义可访问
+    {https://deepspec.org/event/dsss17} 和 {https://deepspec.org/event/dsss18/}
+    获取。2017 年的视频清晰度不高，但在之后的课程中会更好。 *)
 
 (* ################################################################# *)
-(** * Note for Instructors and Contributors *)
+(** * 对授课员的要求 *)
 
-(** If you plan to use these materials in your own teaching, or if you
-    are using software foundations for self study and are finding
-    things you'd like to help add or improve, your contributions are
-    welcome!  You are warmly invited to join the private SF git repo.
+(** 如果您有意使用这些课件授课，或者使用《软件基础》课程进行自学，
+    那肯定会发现希望改进、提高或增加的材料。我们欢迎您的贡献！
+    诚挚邀请您加入 SF 私有 git 仓库。
 
-    In order to keep the legalities simple and to have a single point
-    of responsibility in case the need should ever arise to adjust the
-    license terms, sublicense, etc., we ask all contributors (i.e.,
-    everyone with access to the developers' repository) to assign
-    copyright in their contributions to the appropriate "author of
-    record," as follows:
+    为保证法律上的简单性和单一责任制，任何情况下都不应出现许可协议条款的的调整，
+    授权的转移等等，我们要求所有贡献者（即，任何可访问开发者仓库的人）根据
+    「作者记录」为他们的贡献赋予如下版权信息：
 
       - I hereby assign copyright in my past and future contributions
         to the Software Foundations project to the Author of Record of
@@ -521,29 +397,25 @@
         software infrastructure), the Author of Record is Benjamin C.
         Pierce.
 
-    To get started, please send an email to Benjamin Pierce,
-    describing yourself and how you plan to use the materials and
-    including (A) the above copyright transfer text and (B) your
-    github username.
+    要参与贡献，请向 Benjamin Pierce 发送一封电子邮件，
+    介绍一下自己，说明你打算如何使用这些材料，信中需包含
+    (1) 上面的版权移交文本，以及 (2) 你的 Github 用户名。
 
-    We'll set you up with access to the git repository and developers'
-    mailing lists.  In the repository you'll find the files
-    [INSTRUCTORS] and [CONTRIBUTING] with further instructions. *)
+    我们会赋予您访问 Git 源码库和开发者邮件列表的权限。你可以在源码库中找到
+    [INSTRUCTORS] 和 [CONTRIBUTING] 文件获取更多指示。 *)
 
 (* ################################################################# *)
-(** * Translations *)
+(** * 译本 *)
 
-(** Thanks to the efforts of a team of volunteer translators,
-    _Software Foundations_ can be enjoyed in Japanese at
-    {http://proofcafe.org/sf}.  A Chinese translation is also underway;
-    you can preview it at {https://coq-zh.github.io/SF-zh/}. *)
+(** 感谢翻译志愿者团队的努力，【《软件基础》】
+    已有日文版可以阅读 {http://proofcafe.org/sf}。
+    中文版还在填坑，你可以访问 {https://rocq-zh.github.io/SF-zh/} 阅读，
+     或加入 {https://github.com/Rocq-zh} 参与翻译并提交 Pull Request。 *)
 
 (* ################################################################# *)
-(** * Thanks *)
+(** * 鸣谢 *)
 
-(** Development of the _Software Foundations_ series has been
-    supported, in part, by the National Science Foundation under the
-    NSF Expeditions grant 1521523, _The Science of Deep
-    Specification_. *)
+(** 【《软件基础》】 系列的开发，部分由【国家科学基金会|National Science Foundation】
+    在 NSF 科研赞助 1521523 号【深度规范科学|The Science of Deep Specification】下提供支持。 *)
 
-(* 2026-06-19 17:45 *)
+(* 2026-06-19 18:12 *)

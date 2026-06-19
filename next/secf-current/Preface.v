@@ -69,7 +69,7 @@
     author       =   {  Cătălin Hriţcu and
   Yonghyun Kim},
     editor       =   {Benjamin C. Pierce},
-    title        =   "Security Foundations",
+    title        =   "安全基础",
     series       =   "Software Foundations",
     volume       =   "7",
     year         =   "2026",
@@ -94,4 +94,4 @@
     all people who have contributed to this volume (the people we remembered are
     listed on the cover page of this volume).  *)
 
-(* 2026-06-19 17:51 *)
+(* 2026-06-19 18:19 *)

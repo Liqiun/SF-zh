@@ -627,4 +627,4 @@ Proof.
     [maybe_swap_correct] will be applied (at a larger scale) in
     the next few chapters. *)
 
-(* 2026-06-19 17:07 *)
+(* 2026-06-19 17:50 *)

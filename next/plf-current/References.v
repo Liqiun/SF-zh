@@ -1985,4 +1985,4 @@ Qed.
 End RefsAndNontermination.
 End STLCRef.
 
-(* 2026-06-19 17:03 *)
+(* 2026-06-19 17:46 *)

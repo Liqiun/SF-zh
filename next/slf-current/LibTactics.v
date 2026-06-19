@@ -5270,4 +5270,4 @@ Ltac autorewrite_in_star_patch cont :=
 
 (* End of experimental features *)
 
-(* 2026-06-19 17:06 *)
+(* 2026-06-19 17:48 *)

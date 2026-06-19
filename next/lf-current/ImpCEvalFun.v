@@ -395,4 +395,4 @@ Proof.
   rewrite E1 in E2. inversion E2. reflexivity.
   lia. lia.  Qed.
 
-(* 2026-06-19 17:02 *)
+(* 2026-06-19 17:45 *)

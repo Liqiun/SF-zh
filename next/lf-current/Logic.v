@@ -1802,4 +1802,4 @@ Definition consequentia_mirabilis := forall P:Prop,
 
     [] *)
 
-(* 2026-06-19 17:02 *)
+(* 2026-06-19 17:45 *)

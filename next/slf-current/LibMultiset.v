@@ -754,4 +754,4 @@ Tactic Notation "multiset_empty" :=
 Tactic Notation "multiset_empty" constr(E) :=
   let H := fresh "M" in lets H:E; multiset_empty in H.
 
-(* 2026-06-19 17:06 *)
+(* 2026-06-19 17:48 *)
